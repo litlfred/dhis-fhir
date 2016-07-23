@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.intrahealth</groupId>
+  <artifactId>dhis-fhir</artifactId>
+  <packaging>pom</packaging>
+  <name>DHIS 2 FHIR</name>
+  <url>http://dhis2.org</url>
+  <packaging>jar</packaging>
+  <name>DHIS FHIR API</name>
+
+  <parent>
+    <groupId>org.intrahealth.dhis</groupId>
+    <artifactId>dhis-web</artifactId>
+    <version>2.24-SNAPSHOT</version>
+  </parent>
+
+
+  <build>
+    <finalName>dhis-fhir</finalName>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.hisp.dhis</groupId>
+      <artifactId>dhis-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hisp.dhis</groupId>
+      <artifactId>dhis-service-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+    </dependency>
+    <dependency>
+       <groupId>org.javassist</groupId>
+      <artifactId>javassist</artifactId>
+    </dependency>
+    
+  </dependencies>
+
+  <properties>
+    <rootDir>../</rootDir>
+  </properties>
+</project>
