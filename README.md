@@ -1,4 +1,4 @@
-# dhis-fhir
+# dhis-web-fhir
 DHIS2 FHIR API Bindings and Dynamic Processor
 
 This is part of library to provide FHIR support to DHIS2.  Uses dynamically configurable FHIR support through the nashorn javascript engine.  
