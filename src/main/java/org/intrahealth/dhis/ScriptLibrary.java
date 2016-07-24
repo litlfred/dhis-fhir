@@ -28,14 +28,15 @@ package org.intrahealth.dhis;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import java.util.jar.Attributes;
 
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
  */
-Interface ScriptLibrary extends Attributes {
+public interface ScriptLibrary  {
     
     abstract public boolean containsScript(String name);
-    abstract public String retrieveDependencies(String name);
-    abstract public String[] retrieveSource(String name);
+    abstract public String[] retrieveDependencies(String name);
+    abstract public String retrieveSource(String name);
     
 }

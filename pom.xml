@@ -3,15 +3,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.intrahealth</groupId>
   <artifactId>dhis-web-fhir</artifactId>
-  <packaging>pom</packaging>
-  <name>DHIS 2 FHIR</name>
+  <name>DHIS2 FHIR API</name>
   <url>http://dhis2.org</url>
   <packaging>jar</packaging>
-  <name>DHIS FHIR API</name>
 
   <parent>
-    <groupId>org.intrahealth.dhis</groupId>
-    <artifactId>dhis-web</artifactId>
+    <groupId>org.hisp.dhis</groupId>
+    <artifactId>dhis</artifactId>
     <version>2.24-SNAPSHOT</version>
   </parent>
 
@@ -24,6 +22,17 @@
     <dependency>
       <groupId>org.hisp.dhis</groupId>
       <artifactId>dhis-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>ca.uhn.hapi.fhir</groupId>
+      <artifactId>hapi-fhir-base</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>ca.uhn.hapi.fhir</groupId>
+      <artifactId>hapi-fhir-structures-dstu2</artifactId>
+      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.hisp.dhis</groupId>
@@ -45,6 +54,6 @@
   </dependencies>
 
   <properties>
-    <rootDir>../</rootDir>
+    <rootDir>/Users/litlfred/pulsar_cats/dhis2/dhis-2</rootDir>
   </properties>
 </project>

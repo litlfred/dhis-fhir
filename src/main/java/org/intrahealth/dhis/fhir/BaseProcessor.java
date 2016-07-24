@@ -29,26 +29,29 @@ package org.intrahealth.dhis.fhir;
  */
 
 
+import ca.uhn.fhir.model.api.Bundle;
+import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.parser.StrictErrorHandler;
-
+import java.io.Reader;
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.intrahealth.dhis.Processor;
+import org.intrahealth.dhis.ScriptLibrary;
 
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
  */
-public class BaseProcessor extends Processor { 
-    FhirContext fctx;
-    IParser xmlParser;
-    IParser jsonParser;
+abstract public class BaseProcessor extends Processor { 
+    protected FhirContext fctx;
+    protected IParser xmlParser;
+    protected IParser jsonParser;
     
     public BaseProcessor(ScriptLibrary sl) {
-	super(sl,jslibs);
+	super(sl);
 	setFhirContext();
         fctx.setParserErrorHandler(new StrictErrorHandler());
 	xmlParser = fctx.newXmlParser();
@@ -57,7 +60,7 @@ public class BaseProcessor extends Processor {
     
     abstract protected void setFhirContext();
     
-    abstract String public getResourceName();
+    abstract public  String getResourceName();
     
     public String getOperationKey(String operation) {
 	return getResourceName() + "_" + operation;
@@ -67,18 +70,18 @@ public class BaseProcessor extends Processor {
 	return hasScript(getOperationKey(operation));
     }
 
-    public Boolean processOperation(HttpServletRequest http_request, Object dhis_request, String operation) {
-	processScript(dhis_request,dhis_request,getOperationKey(operation));
+    public Object processOperation(HttpServletRequest http_request, Object dhis_request, String operation) {
+	return processScript(http_request,dhis_request,getOperationKey(operation));
     }
     
-    public String toJsonString(BaseResource r) {
+    public String toJSONString(IResource r) {
 	return jsonParser.encodeResourceToString(r);
     }
     public String toJSONString(Bundle b) {
 	return jsonParser.encodeBundleToString(b);
     }
 
-    public String toXMLString(BaseResource r) {
+    public String toXMLString(IResource r) {
 	return xmlParser.encodeResourceToString(r);
     }
     public String toXMLString(Bundle b) {
@@ -88,66 +91,67 @@ public class BaseProcessor extends Processor {
 
 
     public Bundle bundleFromXML(String r) {
-	Object o = xmlParser.parse(r);
-	if (! o instanceof Bundle) {
+	Object o = xmlParser.parseBundle(r);
+	if (! (o instanceof Bundle)) {
 	    return null;
-	}
-	return o;
+	} 
+	return (Bundle) o;
     }
+
     public Bundle bundleFromXML(Reader r) {
-	Object o = xmlParser.parse(r);
-	if (! o instanceof Bundle) {
+	Object o = xmlParser.parseBundle(r);
+	if (! (o instanceof Bundle)) {
 	    return null;
 	}
-	return o;
+	return (Bundle) o;
     }
     public Bundle bundleFromJSON(JsonObject o) {
 	return bundleFromJSON(o.toString());
     }
     public Bundle bundleFromJSON(String r) {
-	Object o = jsonParser.parse(r);
-	if (! o instanceof Bundle) {
+	Object o = jsonParser.parseBundle(r);
+	if (! (o instanceof Bundle)) {
 	    return null;
 	}
-	return o;
+	return (Bundle) o;
     }
     public Bundle bundleFromJSON(Reader r) {
-	Object o = jsonParser.parse(r);
-	if (! o instanceof Bundle) {
+	Object o = jsonParser.parseBundle(r);
+	if (! (o instanceof Bundle)) {
 	    return null;
 	}
-	return o;
+	return (Bundle) o;
     }
 
-    public BaseResource resourceFromXML(String r) {
-	Object o = xmlParser.parse(r);
-	if (! o instanceof BaseResource) {
+    public IResource resourceFromXML(String r) {
+	Object o = xmlParser.parseResource(r);
+	if (! ( o instanceof IResource)) {
 	    return null;
 	}
-	return o;
+	return (IResource) o;
     }
-    public BaseResource resourceFromXML(Reader r) {
-	Object o = xmlParser.parse(r);
-	if (! o instanceof BaseResource) {
+    public IResource resourceFromXML(Reader r) {
+	Object o = xmlParser.parseResource(r);
+	if (! (o instanceof IResource)) {
 	    return null;
 	}
-	return o;
+	return (IResource) o;
     }
-    public BaseResource resourceFromJSON(String r) {
-	Object o = jsonParser.parse(r);
-	if (! o instanceof BaseResource) {
+    public IResource resourceFromJSON(String r) {
+	Object o = jsonParser.parseResource(r);
+	if (! (o instanceof IResource)) {
 	    return null;
 	}
-	return o;
+	return (IResource) o;
     }
-    public BaseResource resourceFromJSON(Reader r) {
-	Object o = jsonParser.parse(r);
-	if (! o instanceof BaseResource) {
+    public IResource resourceFromJSON(Reader r) {
+	Object o = jsonParser.parseResource(r);
+	if (! (o instanceof IResource)) {
 	    return null;
 	}
-	return o;
+	return (IResource) o;
     }
-    public BaseResource resourceFromJSON(JsonObject o) {
+    public IResource resourceFromJSON(JsonObject o) {
 	return resourceFromJSON(o.toString());
     }
     

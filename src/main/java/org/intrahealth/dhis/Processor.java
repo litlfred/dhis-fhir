@@ -27,14 +27,17 @@ package org.intrahealth.dhis;
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import java.io.Reader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Stack;
 import javax.script.Invocable;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,34 +49,35 @@ import org.intrahealth.dhis.ScriptLibrary;
 public class Processor {
 
     protected ScriptLibrary sl;
+    protected ScriptEngineManager engineManager;
     protected ScriptEngine engine;
     protected Invocable invocable;
     protected ScriptContext ctx;
-    public HttpServletResponse http_response
+    public HttpServletResponse http_response;
     public HttpServletRequest http_request;
     public Object dhis_response;
     public Object dhis_request;
-    public XXXXX dhis;  //DHIS instance
+//    public XXXXX dhis;  //DHIS instance
 
     public Processor(ScriptLibrary sl) {
 	this.sl = sl;
-	ScriptEngineManager engineManager = new ScriptEngineManager();
+	engineManager = new ScriptEngineManager();
 	initEngine();
     }
 
 
-    protected initEngine() {
+    protected void initEngine() {
 	initEngine(new String[0]);
     }
 
-    protected initEngine(String[] jslibs) {
+    protected void  initEngine(String[] jslibs) {
 	dhis_response = null;
 	http_response  =null;
-	dhis = SOMETHING XXXX;
+//	dhis = SOMETHING XXXX;
 	ctx = new SimpleScriptContext();
 	ctx.setErrorWriter(new StringWriter());
 	engine = engineManager.getEngineByName("nashorn");
-	bind('dhis_processor',this,ScriptContext.ENGINE_SCOPE);
+	engine.put("dhis_processor",this);
 
 	//load up any referenced libraries
 	Stack deps = new Stack();
@@ -81,19 +85,25 @@ public class Processor {
 	
 	ArrayList seen = new ArrayList();
 	while(! deps.isEmpty()) {
-	    String script = deps.pop();
+	    String script = deps.pop().toString();
 	    if (! sl.containsScript(script)) {
 		continue;
 	    }
 	    ArrayList  sdeps = new ArrayList();
-	    sdeps.addAll(Arrays.asList(sl.getDependencies(script)));
-	    for (String s: seen) {
+	    sdeps.addAll(Arrays.asList(sl.retrieveDependencies(script)));
+	    for (Object s: seen) {
 		sdeps.remove(s);
 	    }
 	    if (sdeps.size() == 0) {
 		//no dependencies that are unmet
-		String lib = sl.getSource(jslibs[i]);
-		engine.eval(lib);
+		String lib = sl.retrieveSource(script);
+		seen.add(script);
+		try {
+		    engine.eval(lib);
+		} catch (ScriptException e) {
+		    //should put a warning message
+		}
+		
 	    } else {
 		//we need to push this back on the stack and add all the dependencies
 		deps.push(script);
@@ -104,28 +114,39 @@ public class Processor {
     }
 
     public Boolean hasScript(String script) {
-	return sl.containsKey(script);
+	return sl.containsScript(script);
     }
 
-    public Boolean  processScript(HttpServletRequest http_request, Object dhis_request,String script) {
-	if (sl.containsKey(script)) {
-	    String source = sl.getSource(script);
-	    initEngine(sl.getDependencies(script));
+    public Object  processScript(HttpServletRequest http_request, Object dhis_request,String script) {
+	if (sl.containsScript(script)) {
+	    String source = sl.retrieveSource(script);
+	    initEngine(sl.retrieveDependencies(script));
 	    return processRequest(http_request, dhis_request,source);
 	} else{
 	    return null;
 	}
     }
 
-    public Boolean processRequest(HttpServletRequest  http_request, Object dhis_request,Reader js) {
+    public Object processRequest(HttpServletRequest  http_request, Object dhis_request,Reader js) {
 	this.http_request = http_request;
 	this.dhis_request = dhis_request;
-	return engine.eval(js);
+	try {
+	    return engine.eval(js);
+	} catch (ScriptException e) {
+	    //should give error message
+	    return null;
+	}	
+	    
     }
-    public Boolean  processRequest(HttpServletRequest  http_quest, Object dhis_request,String js) {
+    public Object  processRequest(HttpServletRequest  http_quest, Object dhis_request,String js) {
 	this.http_request = http_request;
 	this.dhis_request = dhis_request;
-	return engine.eval(js);
+	try {
+	    return engine.eval(js);
+	} catch (ScriptException e) {
+	    return null;
+	    //should give error message
+	}
     }
 
 

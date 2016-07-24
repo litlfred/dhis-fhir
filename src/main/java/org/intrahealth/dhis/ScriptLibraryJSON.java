@@ -28,20 +28,22 @@ package org.intrahealth.dhis;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import java.util.List;
 import javax.json.JsonObject;
+import javax.json.JsonString;
 import org.intrahealth.dhis.ScriptLibrary;
 
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
  */
-class ScriptLibraryJSON implements ScriptLibrary {
+public class ScriptLibraryJSON implements ScriptLibrary {
     
     protected JsonObject library;
-    public function initizalize(JsonObject library) {
+    public void initizalize(JsonObject library) {
 	this.library = library;
     }
 
-    public boolean containsScript(string name) {
+    public boolean containsScript(String name) {
 	return library.containsKey(name);
     }
     public String retrieveSource(String name) {
@@ -49,6 +51,11 @@ class ScriptLibraryJSON implements ScriptLibrary {
     }
 
     public String[] retrieveDependencies(String name) {
-	return String[] library.getJsonObject(name).getJsonArray("deps").getValuesAs(JsonString.class);
+	List<JsonString> list = library.getJsonObject(name).getJsonArray("deps").getValuesAs(JsonString.class);
+	String[] array = new String [list.size()];
+	for (int i=0; i < array.length; i++) {
+	    array[i] = list.get(i).toString();
+	}
+	return array;
     }
 }
