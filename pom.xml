@@ -5,7 +5,7 @@
   <artifactId>dhis-web-fhir</artifactId>
   <name>DHIS2 FHIR API</name>
   <url>http://dhis2.org</url>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
 
   <parent>
     <groupId>org.hisp.dhis</groupId>
