@@ -50,7 +50,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 abstract public class FHIRProcessor extends BaseProcessor { 
 
-    public static final String RESOURCE_PATH = "/fhir/dstu2";
+    public static final String RESOURCE_PATH = "/dstu2";
     public static final String MIME_FHIR_JSON = "application/fhir+json";
     public static final String MIME_FHIR_XML = "application/xml+json";
 
