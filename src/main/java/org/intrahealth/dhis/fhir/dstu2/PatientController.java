@@ -98,7 +98,7 @@ public class PatientController {
 	JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
 	fp.process_read_json(http_response,http_request,dhis_request);
     }
-
+/*
     @RequestMapping( 
 	value =   "/" + PatientProcessor.RESOURCE_NAME + "/{id}",
 	method = RequestMethod.GET, 
@@ -121,6 +121,6 @@ public class PatientController {
 	fp.process_read_xml(http_response,http_request,dhis_request);
     }
 
-
+*/
 
 }
