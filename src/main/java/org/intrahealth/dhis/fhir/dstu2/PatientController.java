@@ -49,7 +49,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
  */
-@Controller
+@Controller(
+    value =  "/" + FHIRProcessor.RESOURCE_PATH 
+    )
 public class PatientController {
 
 
@@ -75,7 +77,7 @@ public class PatientController {
 
 
     @RequestMapping( 
-	value =  FHIRProcessor.RESOURCE_PATH + "/" + PatientProcessor.RESOURCE_NAME + "/{id}",
+	value =  "/" + PatientProcessor.RESOURCE_NAME + "/{id}",
 	method = RequestMethod.GET, 
 	consumes =  FHIRProcessor.MIME_FHIR_JSON
 	)
@@ -86,7 +88,7 @@ public class PatientController {
     }
 
     @RequestMapping( 
-	value =  FHIRProcessor.RESOURCE_PATH + "/" + PatientProcessor.RESOURCE_NAME ,
+	value =   "/" + PatientProcessor.RESOURCE_NAME ,
 	method = RequestMethod.GET, 
 	consumes = FHIRProcessor.MIME_FHIR_JSON
 	)
@@ -97,7 +99,7 @@ public class PatientController {
     }
 
     @RequestMapping( 
-	value =  FHIRProcessor.RESOURCE_PATH + "/" + PatientProcessor.RESOURCE_NAME + "/{id}",
+	value =   "/" + PatientProcessor.RESOURCE_NAME + "/{id}",
 	method = RequestMethod.GET, 
 	consumes =  FHIRProcessor.MIME_FHIR_XML
 	)
@@ -108,7 +110,7 @@ public class PatientController {
     }
 
     @RequestMapping( 
-	value =  FHIRProcessor.RESOURCE_PATH + "/" + PatientProcessor.RESOURCE_NAME ,
+	value =   "/" + PatientProcessor.RESOURCE_NAME ,
 	method = RequestMethod.GET, 
 	consumes = FHIRProcessor.MIME_FHIR_XML
 	)
