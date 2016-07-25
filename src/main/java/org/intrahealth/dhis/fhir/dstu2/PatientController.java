@@ -49,7 +49,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
  */
-@Controller(
+@Controller
+@RequestMapping( 
     value =  "/" + FHIRProcessor.RESOURCE_PATH 
     )
 public class PatientController {
