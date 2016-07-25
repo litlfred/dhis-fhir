@@ -34,6 +34,8 @@ import java.nio.file.Files;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.util.Map;
+import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.intrahealth.dhis.fhir.dstu2.FHIRProcessor;
@@ -47,56 +49,45 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 /**                                                                                                                                                                                 
- * @author Carl Leitner <litlfred@gmail.com>
+* @author Carl Leitner <litlfred@gmail.com>
  */
 @Controller
 @RequestMapping( 
     value =  "/" + FHIRProcessor.RESOURCE_PATH 
     )
-public class PatientController {
+public class ResourceController {
+    protected  FHIRProcessor resourceProcessor;
 
-
-
-    protected class PatientProcessor extends FHIRProcessor {	    
-	
-	public PatientProcessor(ScriptLibrary sl) {
-	    super(sl);
-	}
-	public static final String RESOURCE_NAME = "Patient";
-
-	public String getResourceName() {
-	    return RESOURCE_NAME;
-	}
-    }
-
-    PatientProcessor fp;
-    
-    public PatientController() {
-	ScriptLibrary sl = new ScriptLibraryJSONClassPathResource(PatientProcessor.RESOURCE_NAME,FHIRProcessor.RESOURCE_PATH);	
-	fp = new PatientProcessor(sl);
+    public ResourceController() {
+	//ScriptLibrary sl =new ScriptLibraryJSONClassPathResource(FHIRProcessor.resources[66],FHIRProcessor.RESOURCE_PATH,FHIRProcessor.operations);
+	String[] resources = {FHIRProcessor.resources[66]};
+	ScriptLibrary sl =new ScriptLibraryJSONClassPathResource(resources,FHIRProcessor.RESOURCE_PATH,FHIRProcessor.operations);
+	resourceProcessor = new FHIRProcessor(sl);
     }
 
 
     @RequestMapping( 
-	value =  "/" + PatientProcessor.RESOURCE_NAME + "/{id}",
+	value =  "/{resource}/{id}",
 	method = RequestMethod.GET, 
 	consumes =  FHIRProcessor.MIME_FHIR_JSON
 	)
-    public void operation_retreive_json( HttpServletResponse http_response, HttpServletRequest http_request, @PathVariable("id") String id ) throws IOException
+    public void operation_read_json( HttpServletResponse http_response, HttpServletRequest http_request,
+				     @PathVariable("id") String id  , @PathVariable("resource") String resource) 
     {
 	JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
-	fp.process_read_json(http_response,http_request,dhis_request);
+	resourceProcessor.process_read_json(resource,http_response,http_request,dhis_request);
     }
 
     @RequestMapping( 
-	value =   "/" + PatientProcessor.RESOURCE_NAME ,
+	value =   "/{resource}",
 	method = RequestMethod.GET, 
 	consumes = FHIRProcessor.MIME_FHIR_JSON
 	)
-    public void operation_retreive_json_param( HttpServletResponse http_response, HttpServletRequest http_request, @RequestParam("_id") String id ) throws IOException
+    public void operation_read_json_param( HttpServletResponse http_response, HttpServletRequest http_request,
+					   @PathVariable("id") String id  , @PathVariable("resource") String resource) 
     {
 	JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
-	fp.process_read_json(http_response,http_request,dhis_request);
+	resourceProcessor.process_read_json(resource,http_response,http_request,dhis_request);
     }
 /*
     @RequestMapping( 

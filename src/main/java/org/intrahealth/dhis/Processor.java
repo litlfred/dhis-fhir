@@ -28,6 +28,7 @@ package org.intrahealth.dhis;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -47,6 +48,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.datavalue.DefaultDataValueService;
 import org.intrahealth.dhis.ScriptLibrary;
+import org.intrahealth.dhis.ScriptExecutionException;
 
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
@@ -89,12 +91,12 @@ public class Processor {
 	engine.put("dhis_processor",this);
 
 	//load up any referenced libraries
-	Stack deps = new Stack();
+	Stack<String> deps = new Stack<String>();
 	deps.addAll(Arrays.asList(jslibs));
 	
 	ArrayList seen = new ArrayList();
 	while(! deps.isEmpty()) {
-	    String script = deps.pop().toString();
+	    String script = deps.pop();
 	    if (! sl.containsScript(script)) {
 		continue;
 	    }
@@ -105,15 +107,14 @@ public class Processor {
 	    }
 	    if (sdeps.size() == 0) {
 		//no dependencies that are unmet
-		String lib = sl.retrieveSource(script);
-		seen.add(script);
 		try {
+		    String lib = sl.retrieveSource(script);
+		    seen.add(script);
 		    log.info("processing library");
 		    eval(lib);
-		} catch (ScriptException e) {
-		    //should put a warning message
+		} catch (Exception e) {
+		    log.info("Could not load library " + script);
 		}
-		
 	    } else {
 		//we need to push this back on the stack and add all the dependencies
 		deps.push(script);
@@ -127,37 +128,36 @@ public class Processor {
 	return sl.containsScript(script);
     }
 
-    public Object  processScript(HttpServletRequest http_request, Object dhis_request,String script) {
-	if (sl.containsScript(script)) {
-	    String source = sl.retrieveSource(script);
-	    initEngine(sl.retrieveDependencies(script));
-	    return processRequest(http_request, dhis_request,source);
-	} else{
-	    return null;
+    public Object  processScript(String script, HttpServletRequest http_request, Object dhis_request) 
+	throws ScriptException, ScriptNotFoundException
+    {
+	String source;
+	try {
+	    log.info("Retrieving script" + script);
+	    source = sl.retrieveSource(script);
+	} catch (IOException e) {
+	    throw new ScriptNotFoundException("Could not retrieve script "  + script);
 	}
+	log.info("Retrieving dependencies");
+	initEngine(sl.retrieveDependencies(script));
+	log.info("processing script " +script);
+	return processRequest(http_request, dhis_request,source);
     }
 
-    public Object processRequest(HttpServletRequest  http_request, Object dhis_request,Reader js) {
+    public Object processRequest(HttpServletRequest  http_request, Object dhis_request,Reader js) 
+	throws ScriptException
+    {
 	this.http_request = http_request;
 	this.dhis_request = dhis_request;
-	try {
-	    return eval(js);
-	} catch (ScriptException e) {
-	    //should give error message
-	    return null;
-	}	
-	    
+	return eval(js);
     }
-    public Object  processRequest(HttpServletRequest  http_quest, Object dhis_request,String js) {
+    public Object  processRequest(HttpServletRequest  http_quest, Object dhis_request,String js) 
+	throws ScriptException
+    {
 	this.http_request = http_request;
 	this.dhis_request = dhis_request;
-	try {
-	    log.info("processing library: " + js);
-	    return eval(js);
-	} catch (ScriptException e) {
-	    return null;
-	    //should give error message
-	}
+	log.info("processing library: " + js);
+	return eval(js);
     }
     
     protected void clearErrors() {
@@ -169,7 +169,7 @@ public class Processor {
 	ctx.setErrorWriter(w);
     }
 
-    protected void showErrors() {
+    protected void checkErrors() throws ScriptExecutionException {
 	String e =  w.toString();
 	if ( (e != null) && (e.length() > 0)) {
 	    log.info(e);
@@ -178,15 +178,16 @@ public class Processor {
 
     protected Object eval(String js) throws ScriptException {
 	clearErrors();
+	log.info("Running\n" + js);
 	Object r  = engine.eval(js);
-	showErrors();
+	checkErrors();
 	return r;
     }
 
    protected Object eval(Reader js) throws ScriptException {
 	clearErrors();
 	Object r  = engine.eval(js);
-	showErrors();
+	checkErrors();
 	return r;
     }
 

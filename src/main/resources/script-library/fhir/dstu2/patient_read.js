@@ -156,4 +156,6 @@ example =
 
 if (dhis_processor.dhis_request._id == 'example') {
     dhis_processor.dhis_response = example;
-} //otherwise we don't do anything
+} else {
+    dhis_processor.dhis_response = {};
+}

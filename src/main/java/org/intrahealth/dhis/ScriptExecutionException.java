@@ -27,56 +27,14 @@ package org.intrahealth.dhis;
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import java.io.IOException;
-import java.util.List;
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import org.intrahealth.dhis.ScriptLibrary;
+
+import javax.script.ScriptException;
 
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
  */
-public class ScriptLibraryJSON implements ScriptLibrary {
-    
-    protected JsonObject library  = Json.createObjectBuilder().build();
-
-    public void setLibrary(JsonObject library) {
-	this.library = library;
-    }
-
-
-    public JsonObject getLibrary() {
-	return library;
-    }
-
-    public boolean containsScript(String name) {
-	return library.containsKey(name);
-    }
-    public String retrieveSource(String name) 
-	throws IOException
-    {
-	if (name == null) {
-	    throw new IOException("Script " + name + " is not in library");
-	}
-	try {
-	    return library.getJsonObject(name).getString("source");
-	} catch (Exception e) {
-	    throw new IOException("Script " + name + " is not in library");
-	}
-    }
-
-    public String[] retrieveDependencies(String name) {
-	try {
-	    List<JsonString> list = library.getJsonObject(name).getJsonArray("deps").getValuesAs(JsonString.class);
-	    String[] array = new String [list.size()];
-	    for (int i=0; i < array.length; i++) {
-		array[i] = list.get(i).toString();
-	    }
-	    return array;
-	} catch (Exception e) {
-	    return new String[0];
-	}
+public class  ScriptExecutionException extends ScriptException {
+    public ScriptExecutionException() {
+	super("");
     }
 }

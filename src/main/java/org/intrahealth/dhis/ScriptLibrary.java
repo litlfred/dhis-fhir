@@ -28,8 +28,7 @@ package org.intrahealth.dhis;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.jar.Attributes;
-
+import java.io.IOException;
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
  */
@@ -37,6 +36,6 @@ public interface ScriptLibrary  {
     
     abstract public boolean containsScript(String name);
     abstract public String[] retrieveDependencies(String name);
-    abstract public String retrieveSource(String name);
+    abstract public String retrieveSource(String name) throws IOException;
     
 }

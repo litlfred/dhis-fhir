@@ -34,14 +34,17 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.DataFormatException;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.parser.StrictErrorHandler;
+import java.io.IOException;
 import java.io.Reader;
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.hisp.dhis.datavalue.DefaultDataValueService;
 import org.intrahealth.dhis.Processor;
 import org.intrahealth.dhis.ScriptLibrary;
+import org.intrahealth.dhis.ScriptNotFoundException;
 
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
@@ -61,19 +64,47 @@ abstract public class BaseProcessor extends Processor {
     
     abstract protected void setFhirContext();
     
-    abstract public  String getResourceName();
     
-    public String getOperationKey(String operation) {
-	return getResourceName() + "_" + operation;
+    public String getOperationKey(String resource, String operation) {
+	return resource + "_" + operation;
     }
 
-    public Boolean hasOperation(String operation) {
-	return hasScript(getOperationKey(operation));
+    public Boolean hasOperation(String resource, String operation) {
+	return hasScript(getOperationKey(resource,operation));
     }
 
-    public Object processOperation(HttpServletRequest http_request, Object dhis_request, String operation) {
-	return processScript(http_request,dhis_request,getOperationKey(operation));
+
+    protected void processJSONResourceOperation(String resource, String operation, HttpServletRequest http_request, JsonObject dhis_request ) 
+	throws IOException, DataFormatException, ScriptNotFoundException, ScriptException
+    {
+	log.info("beginning resource processing of " + operation + " for " + resource);
+	processJSONOperation(resource,operation,http_request,dhis_request);
+	log.info("processed " + operation + " for" +resource);
+	dhis_response = resourceFromJSON( (JsonObject) dhis_response);
     }
+
+    protected void processJSONBundleOperation(String resource, String operation,HttpServletRequest http_request, JsonObject dhis_request ) 
+	throws IOException, DataFormatException, ScriptNotFoundException, ScriptException
+    {
+	processJSONOperation(resource,operation,http_request,dhis_request);
+	dhis_response = bundleFromJSON( (JsonObject) dhis_response);
+    }
+
+
+    public void processJSONOperation(String resource, String operation, HttpServletRequest http_request, Object dhis_request ) 
+	throws IOException, DataFormatException, ScriptNotFoundException, ScriptException
+    {
+	if (!hasOperation(resource,operation)) {
+	    throw new ScriptNotFoundException("No operation " + operation + " for " + resource);
+	}
+	log.info("beginning processing of " + operation +  " for " + resource);
+	processScript(getOperationKey(resource,operation), http_request, dhis_request);
+	log.info("processed " + operation + " for " + resource);
+	if (! (dhis_response instanceof JsonObject)) {
+	    throw new DataFormatException("JSON object not found in dhis_response for operation " + operation + " for "  + resource);
+	}
+    }
+
     
     public String toJSONString(IResource r) throws DataFormatException {
 	if (r == null) {
@@ -125,7 +156,7 @@ abstract public class BaseProcessor extends Processor {
     }
     public Bundle bundleFromJSON(String r) throws DataFormatException  {
 	if (r == null) {
-	    throw new DataFormatException("No JSON strin to process as bundle");
+	    throw new DataFormatException("No JSON string to process as bundle");
 	}
 	Object o = jsonParser.parseBundle(r);
 	return (Bundle) o;
