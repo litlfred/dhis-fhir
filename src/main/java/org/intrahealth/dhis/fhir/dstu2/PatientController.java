@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.intrahealth.dhis.fhir.dstu2.FHIRProcessor;
 import org.intrahealth.dhis.ScriptLibrary;
-import org.intrahealth.dhis.ScriptLibraryJSON;
+import org.intrahealth.dhis.fhir.ScriptLibraryJSONClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,7 +54,7 @@ public class PatientController {
 
 
 
-    public class PatientProcessor extends FHIRProcessor {	    
+    protected class PatientProcessor extends FHIRProcessor {	    
 	
 	public PatientProcessor(ScriptLibrary sl) {
 	    super(sl);
@@ -69,14 +69,8 @@ public class PatientController {
     PatientProcessor fp;
     
     public PatientController() {
-	ScriptLibrary sl = retrieveLibrary();
+	ScriptLibrary sl = new ScriptLibraryJSONClassPathResource(PatientProcessor.RESOURCE_NAME,FHIRProcessor.RESOURCE_PATH);	
 	fp = new PatientProcessor(sl);
-    }
-
-    protected ScriptLibrary retrieveLibrary() {	
-	ScriptLibraryJSON sl = new ScriptLibraryJSON();
-	sl.initizalize(FHIRProcessor.retrieveClassPathResourceLibrary(PatientProcessor.RESOURCE_NAME));
-	return sl;
     }
 
 
@@ -87,9 +81,7 @@ public class PatientController {
 	)
     public void operation_retreive_json( HttpServletResponse http_response, HttpServletRequest http_request, @PathVariable("id") String id ) throws IOException
     {
-	JsonObject dhis_request = Json.createObjectBuilder()
-	    .add("_id",id)
-	    .build();	
+	JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
 	fp.process_read_json(http_response,http_request,dhis_request);
     }
 
@@ -100,9 +92,7 @@ public class PatientController {
 	)
     public void operation_retreive_json_param( HttpServletResponse http_response, HttpServletRequest http_request, @RequestParam("_id") String id ) throws IOException
     {
-	JsonObject dhis_request = Json.createObjectBuilder()
-	    .add("_id",id)
-	    .build();	
+	JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
 	fp.process_read_json(http_response,http_request,dhis_request);
     }
 
@@ -113,9 +103,7 @@ public class PatientController {
 	)
     public void operation_retreive_xml( HttpServletResponse http_response, HttpServletRequest http_request, @PathVariable("id") String id ) throws IOException
     {
-	JsonObject dhis_request = Json.createObjectBuilder()
-	    .add("_id",id)
-	    .build();	
+	JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
 	fp.process_read_xml(http_response,http_request,dhis_request);
     }
 
@@ -126,9 +114,7 @@ public class PatientController {
 	)
     public void operation_retreive_xml_param( HttpServletResponse http_response, HttpServletRequest http_request, @RequestParam("_id") String id ) throws IOException
     {
-	JsonObject dhis_request = Json.createObjectBuilder()
-	    .add("_id",id)
-	    .build();	
+	JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
 	fp.process_read_xml(http_response,http_request,dhis_request);
     }
 

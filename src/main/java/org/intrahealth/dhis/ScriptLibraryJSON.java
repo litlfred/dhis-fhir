@@ -39,8 +39,13 @@ import org.intrahealth.dhis.ScriptLibrary;
 public class ScriptLibraryJSON implements ScriptLibrary {
     
     protected JsonObject library;
-    public void initizalize(JsonObject library) {
+    public void setLibrary(JsonObject library) {
 	this.library = library;
+    }
+
+
+    public JsonObject getLibrary() {
+	return library;
     }
 
     public boolean containsScript(String name) {

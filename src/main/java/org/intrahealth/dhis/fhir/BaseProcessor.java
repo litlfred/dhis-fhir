@@ -28,10 +28,10 @@ package org.intrahealth.dhis.fhir;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.DataFormatException;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.parser.StrictErrorHandler;
 import java.io.Reader;
@@ -39,6 +39,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.hisp.dhis.datavalue.DefaultDataValueService;
 import org.intrahealth.dhis.Processor;
 import org.intrahealth.dhis.ScriptLibrary;
 
@@ -74,84 +75,59 @@ abstract public class BaseProcessor extends Processor {
 	return processScript(http_request,dhis_request,getOperationKey(operation));
     }
     
-    public String toJSONString(IResource r) {
+    public String toJSONString(IResource r) throws DataFormatException {
 	return jsonParser.encodeResourceToString(r);
     }
-    public String toJSONString(Bundle b) {
+    public String toJSONString(Bundle b) throws DataFormatException {
 	return jsonParser.encodeBundleToString(b);
     }
 
-    public String toXMLString(IResource r) {
+    public String toXMLString(IResource r) throws DataFormatException {
 	return xmlParser.encodeResourceToString(r);
     }
-    public String toXMLString(Bundle b) {
+    public String toXMLString(Bundle b) throws DataFormatException {
 	return xmlParser.encodeBundleToString(b);
     }
     
 
 
-    public Bundle bundleFromXML(String r) {
+    public Bundle bundleFromXML(String r) throws DataFormatException  {
 	Object o = xmlParser.parseBundle(r);
-	if (! (o instanceof Bundle)) {
-	    return null;
-	} 
 	return (Bundle) o;
     }
-
-    public Bundle bundleFromXML(Reader r) {
+    public Bundle bundleFromXML(Reader r) throws DataFormatException {
 	Object o = xmlParser.parseBundle(r);
-	if (! (o instanceof Bundle)) {
-	    return null;
-	}
 	return (Bundle) o;
     }
-    public Bundle bundleFromJSON(JsonObject o) {
+    public Bundle bundleFromJSON(JsonObject o) throws DataFormatException {
 	return bundleFromJSON(o.toString());
     }
-    public Bundle bundleFromJSON(String r) {
+    public Bundle bundleFromJSON(String r) throws DataFormatException  {
 	Object o = jsonParser.parseBundle(r);
-	if (! (o instanceof Bundle)) {
-	    return null;
-	}
 	return (Bundle) o;
     }
-    public Bundle bundleFromJSON(Reader r) {
+    public Bundle bundleFromJSON(Reader r) throws DataFormatException  {
 	Object o = jsonParser.parseBundle(r);
-	if (! (o instanceof Bundle)) {
-	    return null;
-	}
 	return (Bundle) o;
     }
 
-    public IResource resourceFromXML(String r) {
+    public IResource resourceFromXML(String r) throws DataFormatException  {
 	Object o = xmlParser.parseResource(r);
-	if (! ( o instanceof IResource)) {
-	    return null;
-	}
 	return (IResource) o;
     }
-    public IResource resourceFromXML(Reader r) {
+    public IResource resourceFromXML(Reader r) throws DataFormatException  {
 	Object o = xmlParser.parseResource(r);
-	if (! (o instanceof IResource)) {
-	    return null;
-	}
 	return (IResource) o;
     }
-    public IResource resourceFromJSON(String r) {
+    public IResource resourceFromJSON(String r) throws DataFormatException {
 	Object o = jsonParser.parseResource(r);
-	if (! (o instanceof IResource)) {
-	    return null;
-	}
 	return (IResource) o;
     }
-    public IResource resourceFromJSON(Reader r) {
+    public IResource resourceFromJSON(Reader r) throws DataFormatException  {
 	Object o = jsonParser.parseResource(r);
-	if (! (o instanceof IResource)) {
-	    return null;
-	}
 	return (IResource) o;
     }
-    public IResource resourceFromJSON(JsonObject o) {
+    public IResource resourceFromJSON(JsonObject o) throws DataFormatException {
 	return resourceFromJSON(o.toString());
     }
     

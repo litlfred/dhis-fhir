@@ -32,15 +32,12 @@ package org.intrahealth.dhis.fhir.dstu2;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.dstu2.resource.BaseResource;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
+import ca.uhn.fhir.parser.DataFormatException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.logging.Log;
 import org.intrahealth.dhis.fhir.BaseProcessor;
 import org.intrahealth.dhis.ScriptLibrary;
 import org.springframework.core.io.ClassPathResource;
@@ -49,9 +46,8 @@ import org.springframework.core.io.ClassPathResource;
  * @author Carl Leitner <litlfred@gmail.com>
  */
 abstract public class FHIRProcessor extends BaseProcessor { 
-
     public static final String RESOURCE_PATH = "/dstu2";
-    public static final String MIME_FHIR_JSON = "application/fhir+json";
+    public static final String MIME_FHIR_JSON = "application/json+fhir";
     public static final String MIME_FHIR_XML = "application/xml+json";
 
     public FHIRProcessor(ScriptLibrary sl) {
@@ -62,87 +58,67 @@ abstract public class FHIRProcessor extends BaseProcessor {
 	fctx = FhirContext.forDstu2();
     }
 
-    public static JsonObject  retrieveClassPathResourceLibrary(String resource) {
-	resource = resource.toLowerCase();
-	JsonObjectBuilder json = Json.createObjectBuilder();
-	String lib_src = (new ClassPathResource("/script-library/fhir/dstu2/" + resource + "_base_library.js")).getPath();
-	String lib = null;
+     
+    public void process_read_json(HttpServletResponse http_response, HttpServletRequest http_request, JsonObject dhis_request ) 
+    {
 	try {
-	    lib = new String(Files.readAllBytes(Paths.get(lib_src)) , StandardCharsets.UTF_8);
-	} catch (IOException e) {}
-	if (lib != null) {
-	    json.add(resource + "_base_library", Json.createObjectBuilder()
-		     .add("source",lib)
-		);
-	}
-	String[] operations = {"read","vread","base","update","delete","history","create","search","conformance","batch","transaction"};
-	for (int i=0; i < operations.length; i++) {
-	    String operation = operations[i];
-	    String script_src = (new ClassPathResource("/script-library/fhir/dstu2/" + resource + "_" +  operation + ".js")).getPath();
-	    String script;
+	    processResourceOperation("read",http_response,http_request,dhis_request);
+	    http_response.setContentType( FHIRProcessor.MIME_FHIR_JSON);
+	    http_response.setCharacterEncoding("UTF-8");
+	    http_response.getWriter().write(toJSONString((BaseResource) dhis_response));
+	    http_response.setStatus(HttpServletResponse.SC_OK);
+	} catch (Exception e) {
 	    try {
-		script =  new String(Files.readAllBytes(Paths.get(script_src)) , StandardCharsets.UTF_8);
-	    } catch (IOException e) {
-		continue;
+		http_response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"internal script processing error on json for read.\n" + e.toString());
+	    } catch (IOException ioe) {
+		log.info("Could not send http response: " + ioe.toString());
 	    }
-	    //we have a script
-	    if (lib != null)  {
-		json.add( resource + "_" + operation, Json.createObjectBuilder()
-			  .add("source",script)
-			 .add("deps", Json.createArrayBuilder()
-			      .add( resource + "_base_library")
-			     )
-		    );
-	    } else {
-		json.add(resource + "_" + operation, Json.createObjectBuilder()
-			 .add("source",script)
-		    );      
+	    return ;
+	}
+    }
+
+    public void process_read_xml(HttpServletResponse http_response, HttpServletRequest http_request, JsonObject dhis_request ) 
+    {
+	try {
+	    processResourceOperation("read",http_response,http_request,dhis_request);
+	    http_response.setContentType( FHIRProcessor.MIME_FHIR_XML);
+	    http_response.setCharacterEncoding("UTF-8");
+	    http_response.getWriter().write(toXMLString((BaseResource) dhis_response));
+	    http_response.setStatus(HttpServletResponse.SC_OK);
+	} catch (Exception e) {
+	    try {
+		http_response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"internal script processing error on json for read.\n" + e.toString());
+	    } catch (IOException ioe) {
+		log.info("Could not send http response:" + ioe.toString());
 	    }
-	}
-	return json.build();
-    }
-    
-    public void process_read_json(HttpServletResponse http_response, HttpServletRequest http_request, JsonObject dhis_request ) throws IOException
-    {
-	process_read(http_response,http_request,dhis_request);
-	if ( !(dhis_response instanceof BaseResource)) {
-	    http_response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"internal script processing error on resource");
 	    return ;
 	}
-	http_response.setContentType( FHIRProcessor.MIME_FHIR_JSON);
-	http_response.setCharacterEncoding("UTF-8");
-	http_response.setStatus(HttpServletResponse.SC_OK);
-	http_response.getWriter().write(toJSONString((BaseResource) dhis_response));
-
     }
 
-    public void process_read_xml(HttpServletResponse http_response, HttpServletRequest http_request, JsonObject dhis_request ) throws IOException
+    protected void processResourceOperation(String operation,HttpServletResponse http_response, HttpServletRequest http_request, JsonObject dhis_request ) throws IOException, DataFormatException
     {
-	process_read(http_response,http_request,dhis_request);
-	if ( !(dhis_response instanceof BaseResource)) {
-	    http_response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"internal script processing error on resource");
-	    return ;
-	}
-	http_response.setContentType( FHIRProcessor.MIME_FHIR_XML);
-	http_response.setCharacterEncoding("UTF-8");
-	http_response.setStatus(HttpServletResponse.SC_OK);
-	http_response.getWriter().write(toXMLString((BaseResource) dhis_response));
-    }
-
-    public void process_read(HttpServletResponse http_response, HttpServletRequest http_request, JsonObject dhis_request ) throws IOException
-    {
-	if (!hasOperation("read")) {
-	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"processing script not implemented");
-	    return ;
-	}
-	processOperation(http_request, dhis_request,"read");
-	if (! (dhis_response instanceof JsonObject)) {
-	    http_response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"internal script processing error on json");
-	    return ;
-	}
+	processOperation(operation,http_response,http_request,dhis_request);
 	dhis_response = resourceFromJSON( (JsonObject) dhis_response);
     }
 
-   
+    protected void processBundleOperation(String operation,HttpServletResponse http_response, HttpServletRequest http_request, JsonObject dhis_request ) throws IOException, DataFormatException
+    {
+	processOperation(operation,http_response,http_request,dhis_request);
+	dhis_response = bundleFromJSON( (JsonObject) dhis_response);
+    }
+
+    protected void processOperation(String operation,HttpServletResponse http_response, HttpServletRequest http_request, JsonObject dhis_request ) throws IOException, DataFormatException
+    {
+	if (!hasOperation(operation)) {
+	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"processing script not implemented for " + operation);
+	    return ;
+	}
+	processOperation(http_request, dhis_request,operation);
+	if (! (dhis_response instanceof JsonObject)) {
+	    throw new DataFormatException("JSON object not found in dhis_response for operation " + operation);
+	}
+    }
+
+    
 
 }
