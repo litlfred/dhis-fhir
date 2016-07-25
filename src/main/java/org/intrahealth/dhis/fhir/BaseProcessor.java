@@ -76,58 +76,100 @@ abstract public class BaseProcessor extends Processor {
     }
     
     public String toJSONString(IResource r) throws DataFormatException {
+	if (r == null) {
+	    throw new DataFormatException("No resource to convert to JSON");
+	}
 	return jsonParser.encodeResourceToString(r);
     }
     public String toJSONString(Bundle b) throws DataFormatException {
+	if (b == null) {
+	    throw new DataFormatException("No bundle to convert to JSON");
+	}
 	return jsonParser.encodeBundleToString(b);
     }
 
     public String toXMLString(IResource r) throws DataFormatException {
+	if (r == null) {
+	    throw new DataFormatException("No resource to covvert to XML");
+	}
 	return xmlParser.encodeResourceToString(r);
     }
     public String toXMLString(Bundle b) throws DataFormatException {
+	if (b == null) {
+	    throw new DataFormatException("No bundle to covvert to XML");
+	}
 	return xmlParser.encodeBundleToString(b);
     }
     
 
 
     public Bundle bundleFromXML(String r) throws DataFormatException  {
+	if (r == null) {
+	    throw new DataFormatException("No XML stringr to process as bundle");
+	}
 	Object o = xmlParser.parseBundle(r);
 	return (Bundle) o;
     }
     public Bundle bundleFromXML(Reader r) throws DataFormatException {
+	if (r == null) {
+	    throw new DataFormatException("No XML reader to process as bundle");
+	}
 	Object o = xmlParser.parseBundle(r);
 	return (Bundle) o;
     }
     public Bundle bundleFromJSON(JsonObject o) throws DataFormatException {
+	if (o == null) {
+	    throw new DataFormatException("No JSON to process as bundle");
+	}
 	return bundleFromJSON(o.toString());
     }
     public Bundle bundleFromJSON(String r) throws DataFormatException  {
+	if (r == null) {
+	    throw new DataFormatException("No JSON strin to process as bundle");
+	}
 	Object o = jsonParser.parseBundle(r);
 	return (Bundle) o;
     }
     public Bundle bundleFromJSON(Reader r) throws DataFormatException  {
+	if (r == null) {
+	    throw new DataFormatException("No JSON reader to process as bundle");
+	}
 	Object o = jsonParser.parseBundle(r);
 	return (Bundle) o;
     }
 
     public IResource resourceFromXML(String r) throws DataFormatException  {
+	if (r == null) {
+	    throw new DataFormatException("No XML string to process as resource");
+	}
 	Object o = xmlParser.parseResource(r);
 	return (IResource) o;
     }
     public IResource resourceFromXML(Reader r) throws DataFormatException  {
+	if (r == null) {
+	    throw new DataFormatException("No XML reader to process as resource");
+	}
 	Object o = xmlParser.parseResource(r);
 	return (IResource) o;
     }
     public IResource resourceFromJSON(String r) throws DataFormatException {
+	if (r == null) {
+	    throw new DataFormatException("No JSON string to process as resource");
+	}
 	Object o = jsonParser.parseResource(r);
 	return (IResource) o;
     }
     public IResource resourceFromJSON(Reader r) throws DataFormatException  {
+	if (r == null) {
+	    throw new DataFormatException("No JSON reader to process as resource");
+	}
 	Object o = jsonParser.parseResource(r);
 	return (IResource) o;
     }
     public IResource resourceFromJSON(JsonObject o) throws DataFormatException {
+	if (o == null) {
+	    throw new DataFormatException("No JSON to process as resource");
+	}
 	return resourceFromJSON(o.toString());
     }
     
