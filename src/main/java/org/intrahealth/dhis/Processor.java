@@ -27,8 +27,10 @@ package org.intrahealth.dhis;
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 import java.io.Reader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
@@ -57,10 +59,12 @@ public class Processor {
     protected ScriptEngine engine;
     protected Invocable invocable;
     protected ScriptContext ctx;
+    protected Writer w;
     public HttpServletResponse http_response;
     public HttpServletRequest http_request;
     public Object dhis_response;
     public Object dhis_request;
+
 //    public XXXXX dhis;  //DHIS instance
 
     public Processor(ScriptLibrary sl) {
@@ -79,7 +83,8 @@ public class Processor {
 	http_response  =null;
 //	dhis = SOMETHING XXXX;
 	ctx = new SimpleScriptContext();
-	ctx.setErrorWriter(new StringWriter());
+	w =new StringWriter();
+	ctx.setErrorWriter(w);
 	engine = engineManager.getEngineByName("nashorn");
 	engine.put("dhis_processor",this);
 
@@ -103,7 +108,8 @@ public class Processor {
 		String lib = sl.retrieveSource(script);
 		seen.add(script);
 		try {
-		    engine.eval(lib);
+		    log.info("processing library");
+		    eval(lib);
 		} catch (ScriptException e) {
 		    //should put a warning message
 		}
@@ -135,7 +141,7 @@ public class Processor {
 	this.http_request = http_request;
 	this.dhis_request = dhis_request;
 	try {
-	    return engine.eval(js);
+	    return eval(js);
 	} catch (ScriptException e) {
 	    //should give error message
 	    return null;
@@ -146,12 +152,42 @@ public class Processor {
 	this.http_request = http_request;
 	this.dhis_request = dhis_request;
 	try {
-	    return engine.eval(js);
+	    log.info("processing library: " + js);
+	    return eval(js);
 	} catch (ScriptException e) {
 	    return null;
 	    //should give error message
 	}
     }
+    
+    protected void clearErrors() {
+	String e =  w.toString();
+	if ( (e != null) && (e.length() > 0)) {
+	    log.info(e);
+	}
+	w =new StringWriter();
+	ctx.setErrorWriter(w);
+    }
 
+    protected void showErrors() {
+	String e =  w.toString();
+	if ( (e != null) && (e.length() > 0)) {
+	    log.info(e);
+	}
+    }
+
+    protected Object eval(String js) throws ScriptException {
+	clearErrors();
+	Object r  = engine.eval(js);
+	showErrors();
+	return r;
+    }
+
+   protected Object eval(Reader js) throws ScriptException {
+	clearErrors();
+	Object r  = engine.eval(js);
+	showErrors();
+	return r;
+    }
 
 }
