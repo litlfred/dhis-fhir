@@ -36,15 +36,21 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.parser.StrictErrorHandler;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
+import java.util.Map;
+import java.util.stream.Collector;
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
 import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.hisp.dhis.datavalue.DefaultDataValueService;
-import org.intrahealth.dhis.Processor;
-import org.intrahealth.dhis.ScriptLibrary;
-import org.intrahealth.dhis.ScriptNotFoundException;
+import org.intrahealth.dhis.scriptlibrary.Processor;
+import org.intrahealth.dhis.scriptlibrary.ScriptLibrary;
+import org.intrahealth.dhis.scriptlibrary.ScriptNotFoundException;
 
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
@@ -95,10 +101,18 @@ abstract public class BaseProcessor extends Processor {
 	throws IOException, DataFormatException, ScriptNotFoundException, ScriptException
     {
 	log.info("beginning json processing of " + operation +  " for " + resource);
-	processScript(getOperationKey(resource,operation), http_request, dhis_request);
+	processScript(getOperationKey(resource,operation) + ".js" , http_request, dhis_request);
 	log.info("processed " + operation + " for " + resource);
-	if (! (dhis_response instanceof JsonObject)) {
-	    throw new DataFormatException("JSON object not found in dhis_response for operation " + operation + " for "  + resource);
+	if (dhis_response instanceof ScriptObjectMirror) {
+	    dhis_response = toJsonObject((ScriptObjectMirror) dhis_response);
+	}
+	if (! (dhis_response instanceof JsonObject)) {	    
+	    if (dhis_response != null) {
+		log.info(dhis_response.toString());
+	    } else {
+		log.info("null for dhis_response");
+	    }
+	    throw new DataFormatException("JSON object not found in dhis_response for operation " + operation + " for "  + resource  + "\n:");
 	}
     }
 
@@ -201,5 +215,11 @@ abstract public class BaseProcessor extends Processor {
 	return resourceFromJSON(o.toString());
     }
     
-
+    public JsonObject toJsonObject(ScriptObjectMirror som) {
+        //this is a crappy hack.  better to use nashorn JSObject?
+	JsonReader jsonReader = Json.createReader(new StringReader(som.toString())); 
+	JsonObject object = jsonReader.readObject();
+	jsonReader.close();
+	return object;
+    }
 }

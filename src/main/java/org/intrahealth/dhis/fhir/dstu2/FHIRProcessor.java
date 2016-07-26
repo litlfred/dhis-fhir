@@ -40,15 +40,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.intrahealth.dhis.fhir.BaseProcessor;
-import org.intrahealth.dhis.ScriptLibrary;
-import org.intrahealth.dhis.ScriptNotFoundException;
+import org.intrahealth.dhis.scriptlibrary.ScriptLibrary;
+import org.intrahealth.dhis.scriptlibrary.ScriptNotFoundException;
 import org.springframework.core.io.ClassPathResource;
 
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
  */
 public class FHIRProcessor extends BaseProcessor { 
-    public static final String RESOURCE_PATH = "/dstu2";
+    public static final String RESOURCE_PATH = "/fhir/dstu2";
     public static final String MIME_FHIR_JSON = "application/json+fhir";
     public static final String MIME_FHIR_XML = "application/xml+json";
     public static final String[] operations = {

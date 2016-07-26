@@ -1,4 +1,4 @@
-package org.intrahealth.dhis;
+package org.intrahealth.dhis.scriptlibrary;
 /*
  * Copyright (c) 2016, IntraHealth International
  * All rights reserved.
@@ -47,8 +47,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.datavalue.DefaultDataValueService;
-import org.intrahealth.dhis.ScriptLibrary;
-import org.intrahealth.dhis.ScriptExecutionException;
+import org.intrahealth.dhis.scriptlibrary.ScriptLibrary;
+import org.intrahealth.dhis.scriptlibrary.ScriptExecutionException;
 
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
@@ -180,6 +180,11 @@ public class Processor {
 	clearErrors();
 	log.info("Running\n" + js);
 	Object r  = engine.eval(js);
+	if (r== null) {
+	    log.info("Processing resulted in null");
+	} else {
+	    log.info("Processing resulted in (" + r.getClass()  + "):\n"  + r.toString());
+	}
 	checkErrors();
 	return r;
     }

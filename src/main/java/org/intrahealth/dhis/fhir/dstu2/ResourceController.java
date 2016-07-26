@@ -38,8 +38,11 @@ import java.util.Map;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.hisp.dhis.appmanager.App;
+import org.hisp.dhis.appmanager.AppManager;
+import org.hisp.dhis.appmanager.AppStatus;
 import org.intrahealth.dhis.fhir.dstu2.FHIRProcessor;
-import org.intrahealth.dhis.ScriptLibrary;
+import org.intrahealth.dhis.scriptlibrary.ScriptLibrary;
 import org.intrahealth.dhis.fhir.ScriptLibraryJSONClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,16 +56,38 @@ import org.springframework.web.bind.annotation.PathVariable;
  */
 @Controller
 @RequestMapping( 
-    value =  "/" + FHIRProcessor.RESOURCE_PATH 
+    value =  "/{app}/" + FHIRProcessor.RESOURCE_PATH 
     )
-public class ResourceController {
-    protected  FHIRProcessor resourceProcessor;
+public class ResourceControllerApp {
+    protected Map<String,FHIRProcessor> FHIRProcessors = new HashMap<String,FHIRProcessor>();
 
-    public ResourceController() {
-	ScriptLibrary sl =new ScriptLibraryJSONClassPathResource(FHIRProcessor.resources,FHIRProcessor.RESOURCE_PATH,FHIRProcessor.operations);
-	resourceProcessor = new FHIRProcessor(sl);
+    @Autowired
+    private  AppManager appManager; //not sure how this gets set!
+
+    protected FHIRProcessor getProcessor(String app,http_response) {
+	FHIRProcessor fp = null;
+	if (!FHIRProcessors.containsKey(app)
+	    && appManager.exists(app)
+	    ) {
+	    ScriptLibrary sl = new AppScriptLibrary(app,FHIRProcessor.RESOURCE_PATH);	
+	    fp = new FHIRProcessor(sl);
+	    FHIRProcessors.put(app,fp);
+	} else {
+	    fp =  resourceProcessors.get(app);
+	}
+	if (fp == null) {
+	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"App " + app + " does not exist");
+	    return null;
+	}  else if ( !appManager.isAccessible( app)) {
+	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"Permision denied for " + app);
+	    return null;
+	} else if ( ! Arrays.asList(FHIRProcessor.resources).contains(resource)) {
+	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"Invalid resource "  + resource);
+	    return null;
+	} else {
+	    return fp;
+	}
     }
-
 
     @RequestMapping( 
 	value =  "/{resource}/{id}",
@@ -70,10 +95,14 @@ public class ResourceController {
 	consumes =  FHIRProcessor.MIME_FHIR_JSON
 	)
     public void operation_read_json( HttpServletResponse http_response, HttpServletRequest http_request,
+				     @PathVariable("app") String app
 				     @PathVariable("id") String id  , @PathVariable("resource") String resource) 
-    {
-	JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
-	resourceProcessor.process_read_json(resource,http_response,http_request,dhis_request);
+    {	
+	FHIRProcesor fp = getProcessor(app,resource,http_response);
+	if ( resourceProcessor  != null) {
+	    JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
+	    resourceProcessor.process_read_json(resource,http_response,http_request,dhis_request);
+	}
     }
 
     @RequestMapping( 
@@ -82,10 +111,14 @@ public class ResourceController {
 	consumes = FHIRProcessor.MIME_FHIR_JSON
 	)
     public void operation_read_json_param( HttpServletResponse http_response, HttpServletRequest http_request,
+					   @PathVariable("app") String app
 					   @PathVariable("id") String id  , @PathVariable("resource") String resource) 
     {
-	JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
-	resourceProcessor.process_read_json(resource,http_response,http_request,dhis_request);
+	FHIRProcesor fp = getProcessor(app,resource,http_response);
+	if ( resourceProcessor  != null) {
+	    JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
+	    resourceProcessor.process_read_json(resource,http_response,http_request,dhis_request);
+	}
     }
 /*
     @RequestMapping( 

@@ -1,4 +1,4 @@
-package org.intrahealth.dhis;
+package org.intrahealth.dhis.scriptlibrary;
 /*
  * Copyright (c) 2016, IntraHealth International
  * All rights reserved.
