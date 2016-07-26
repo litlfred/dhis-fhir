@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
@@ -41,10 +42,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.hisp.dhis.appmanager.App;
 import org.hisp.dhis.appmanager.AppManager;
 import org.hisp.dhis.appmanager.AppStatus;
+import org.hisp.dhis.user.CurrentUserService;
+import org.hisp.dhis.user.User;
+import org.hisp.dhis.user.UserService;
+import org.hisp.dhis.webapi.service.ContextService;
+import org.hisp.dhis.webapi.utils.ContextUtils;
 import org.intrahealth.dhis.fhir.dstu2.FHIRProcessor;
 import org.intrahealth.dhis.scriptlibrary.ScriptLibrary;
-import org.intrahealth.dhis.fhir.ScriptLibraryJSONClassPathResource;
+import org.intrahealth.dhis.scriptlibrary.AppScriptLibrary;
 import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,31 +65,38 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping( 
     value =  "/{app}/" + FHIRProcessor.RESOURCE_PATH 
     )
-public class ResourceControllerApp {
+public class ResourceController {
     protected Map<String,FHIRProcessor> FHIRProcessors = new HashMap<String,FHIRProcessor>();
-
+    @Autowired
+    private CurrentUserService currentUserService;
     @Autowired
     private  AppManager appManager; //not sure how this gets set!
 
-    protected FHIRProcessor getProcessor(String app,http_response) {
+    protected FHIRProcessor getProcessor(String app,String resource,String operation,HttpServletRequest http_request, HttpServletResponse http_response) {
+        String contextPath = ContextUtils.getContextPath( http_request );
+	App a = appManager.getApp(app,contextPath);
+	User user = currentUserService.getCurrentUser();
 	FHIRProcessor fp = null;
 	if (!FHIRProcessors.containsKey(app)
-	    && appManager.exists(app)
+	    && a != null
 	    ) {
 	    ScriptLibrary sl = new AppScriptLibrary(app,FHIRProcessor.RESOURCE_PATH);	
 	    fp = new FHIRProcessor(sl);
 	    FHIRProcessors.put(app,fp);
 	} else {
-	    fp =  resourceProcessors.get(app);
+	    fp = FHIRProcessors.get(app);
 	}
 	if (fp == null) {
 	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"App " + app + " does not exist");
 	    return null;
-	}  else if ( !appManager.isAccessible( app)) {
+	}  else if ( !appManager.isAccessible( a,user)) {
 	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"Permision denied for " + app);
 	    return null;
 	} else if ( ! Arrays.asList(FHIRProcessor.resources).contains(resource)) {
 	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"Invalid resource "  + resource);
+	    return null;
+	} else if ( ! Arrays.asList(FHIRProcessor.operations).contains(operation)) {
+	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"Invalid operation "  + operation);
 	    return null;
 	} else {
 	    return fp;
@@ -95,13 +109,13 @@ public class ResourceControllerApp {
 	consumes =  FHIRProcessor.MIME_FHIR_JSON
 	)
     public void operation_read_json( HttpServletResponse http_response, HttpServletRequest http_request,
-				     @PathVariable("app") String app
+				     @PathVariable("app") String app,
 				     @PathVariable("id") String id  , @PathVariable("resource") String resource) 
     {	
-	FHIRProcesor fp = getProcessor(app,resource,http_response);
-	if ( resourceProcessor  != null) {
+	FHIRProcessor fp = getProcessor(app,resource,"read",http_request,http_response);
+	if ( fp  != null) {
 	    JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
-	    resourceProcessor.process_read_json(resource,http_response,http_request,dhis_request);
+	    fp.process_read_json(resource,http_response,http_request,dhis_request);
 	}
     }
 
@@ -111,13 +125,13 @@ public class ResourceControllerApp {
 	consumes = FHIRProcessor.MIME_FHIR_JSON
 	)
     public void operation_read_json_param( HttpServletResponse http_response, HttpServletRequest http_request,
-					   @PathVariable("app") String app
+					   @PathVariable("app") String app,
 					   @PathVariable("id") String id  , @PathVariable("resource") String resource) 
     {
-	FHIRProcesor fp = getProcessor(app,resource,http_response);
-	if ( resourceProcessor  != null) {
+	FHIRProcessor fp = getProcessor(app,resource,"read",http_request,http_response);
+	if ( fp  != null) {
 	    JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
-	    resourceProcessor.process_read_json(resource,http_response,http_request,dhis_request);
+	    fp.process_read_json(resource,http_response,http_request,dhis_request);
 	}
     }
 /*

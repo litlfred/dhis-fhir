@@ -29,16 +29,21 @@ package org.intrahealth.dhis.scriptlibrary;
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
+import javax.json.JsonString;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,6 +54,7 @@ import org.hisp.dhis.datavalue.DefaultDataValueService;
 import org.hisp.dhis.render.DefaultRenderService;
 import org.intrahealth.dhis.scriptlibrary.ScriptLibrary;
 import org.intrahealth.dhis.scriptlibrary.ScriptLibraryJSON;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
@@ -57,13 +63,88 @@ import org.springframework.core.io.ResourceLoader;
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
  */
-public class AppScriptLibraryJSON implements ScriptLibrary {
+public class AppScriptLibrary implements ScriptLibrary {
 
     protected static final Log log = LogFactory.getLog( DefaultDataValueService.class );    
     private final ResourceLoader resourceLoader = new DefaultResourceLoader();    
     @Autowired
     private  AppManager appManager; //not sure how this gets set!
     protected Iterable<Resource> scriptLocations;
+    protected String app;
+    protected String[] resources;
+    protected String[] operations;
+    protected String pathPrefix;
+    
+    public AppScriptLibrary(String app, String pathPrefix) {
+	log.info("Init library for " + app + "  under " + pathPrefix);
+	this.app = app;
+	this.pathPrefix = pathPrefix;
+	this.resources = resources;
+	this.operations = operations;	
+	this.scriptLocations = Lists.newArrayList(
+            resourceLoader.getResource( "file:" + appManager.getAppFolderPath() + "/" + app + "/script-library/"  + pathPrefix + "/"),
+            resourceLoader.getResource( "classpath*:/apps/" + app + "/script-library/"  + pathPrefix + "/" ),
+            resourceLoader.getResource( "/apps/" + app + "/script-library/"  + pathPrefix + "/" )
+	    );
+    }
+
+    protected JsonObject loadDependencies() {
+        Iterable<Resource> locations = Lists.newArrayList(
+            resourceLoader.getResource( "file:" + appManager.getAppFolderPath() + "/" + app + "/" ),
+            resourceLoader.getResource( "classpath*:/apps/" + app + "/" ),
+            resourceLoader.getResource( "/apps/" + app + "/" )
+        );
+	try {
+	    Resource manifest = findResource( locations, "manifest.webapp" );
+	    JsonReader jsonReader = Json.createReader(new InputStreamReader(manifest.getInputStream()));
+	    JsonObject json = jsonReader.readObject();
+	    jsonReader.close();
+	    JsonObject deps = json.getJsonObject("script-library").getJsonObject("dependencies"); 
+	    return deps;
+	} catch (Exception e) {
+	    return Json.createObjectBuilder().build(); //return empty 
+	}
+	
+    }
+
+    public boolean containsScript(String name) {
+	try {
+	    Resource r = findResource(scriptLocations,name);
+	    return (r != null);
+	} catch (IOException e) {
+	    return false;
+	}
+    }
+
+    public String retrieveSource(String name) 
+	throws IOException 
+    {
+	try {
+	    Resource r = findResource(scriptLocations,name );
+	    return  IOUtils.toString(r.getInputStream(), "UTF-8");
+	} catch (Exception e) {
+	    throw new IOException("Could not get " + name);
+	}
+    }
+
+    public String[] retrieveDependencies(String name) {	
+	try {
+	    JsonArray rdeps = this.loadDependencies().getJsonArray(name);
+	    ArrayList<String> deps = new ArrayList<String>();
+	    for (Object o: rdeps) {
+		if (o instanceof JsonString) {
+		    deps.add(o.toString());
+		}
+	    }
+	    return deps.toArray(new String[deps.size()]);
+	} catch (Exception e) {
+	    return new String[0];
+	}
+
+	
+    }
+    
+
 
 
     //stolen from dhis-web/dhis-web-api/src/main/java/org/hisp/dhis/webapi/controller/AppController.java
@@ -78,80 +159,5 @@ public class AppScriptLibraryJSON implements ScriptLibrary {
         }
         return null;
     }
-    protected String app;
-    protected String[] resources;
-    protected String[] operations;
-    protected String pathPrefix;
-    public AppScriptLibrary(String app, String pathPrefix) {
-	log.info("Init library for " + app + "  under " + pathPrefix);
-	this.app = app;
-	this.pathPrefix = pathPrefix;
-	this.resources = resources;
-	this.operations = operations;	
-	this.scriptLocations =  = Lists.newArrayList(
-            resourceLoader.getResource( "file:" + appManager.getAppFolderPath() + "/" + app + "/script-library/"  + pathPrefix + "/"),
-            resourceLoader.getResource( "classpath*:/apps/" + app + "/script-library/"  + pathPrefix + "/" ),
-            resourceLoader.getResource( "/apps/" + app + "/script-library/"  + pathPrefix + "/" )
-	    );
-    }
-
-    protected JsonObject loadDependencies() {
-        Iterable<Resource> locations = Lists.newArrayList(
-            resourceLoader.getResource( "file:" + appManager.getAppFolderPath() + "/" + app + "/" ),
-            resourceLoader.getResource( "classpath*:/apps/" + app + "/" )
-            resourceLoader.getResource( "/apps/" + app + "/" )
-        );
-	try {
-	    Resource manifest = findResource( locations, "manifest.webapp" );
-	    JsonReader jsonReader = Json.createReader(new new InputStreamReader(manifest.getInputStream()));
-	    JsonObject json = jsonReader.readObject();
-	    jsonReader.close();
-	    JsonObjects sl = json.get("script-library");
-	    JsonObjects deps = sl.get("dependencies");
-	    return deps;
-	} catch (Exception e) {
-	    Json.createObjectBuilder().build(); //return empty 
-	}
-	
-    }
-
-    public boolean containsScript(String name) {
-	try {
-	    Resource r = findResource(scriptLocations,name);
-	} catch (IOException e) {
-	    return false;
-	}
-	return (r != null);
-    }
-
-    public String retrieveSource(String name) 
-	throws IOException 
-    {
-	Resource r = findResource(scriptLocations,name );
-	if (r == null) {
-	    throw IOException("Could not get " + name);
-	}
-	return  IOUtils.toString(r.getInputStream(), "UTF-8");
-    }
-
-    public String[] retrieveDependencies(String name) {	
-	try {
-	    Object[] rdeps = this.loadDependencies().getJsonArray(name);
-	    ArrayList<String> deps = new ArrayList<String>();
-	    for (Object o: rdeps) {
-		if (o instanceof String) {
-		    deps.add((String) o);
-		}
-	    }
-	    return deps.toArray();
-	} catch (Exception e) {
-	    return new String[0];
-	}
-
-	
-    }
-    
-
-
 
 }
