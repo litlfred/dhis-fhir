@@ -46,12 +46,16 @@ import org.hisp.dhis.datavalue.DefaultDataValueService;
 import org.intrahealth.dhis.ScriptLibrary;
 import org.intrahealth.dhis.ScriptLibraryJSON;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
  */
 public class ScriptLibraryJSONClassPathResource extends ScriptLibraryJSON {
     protected static final Log log = LogFactory.getLog( DefaultDataValueService.class );    
+    private final ResourceLoader resourceLoader = new DefaultResourceLoader();
 
     public ScriptLibraryJSONClassPathResource(String[] resources,String pathPrefix, String[] operations) {
 	log.info("Init library  under " + pathPrefix);
@@ -59,17 +63,23 @@ public class ScriptLibraryJSONClassPathResource extends ScriptLibraryJSON {
     }
 
     protected JsonObject scanClassPath(String[] resources, String pathPrefix,String[] operations) {
+	/*  we are scanning the classpath for .js files.  may be better to access source code dynamically, 
+	 *  but as this is pnly for proof of concept.. c'est la vie
+	 */
 	JsonObjectBuilder json = Json.createObjectBuilder();
 	ArrayList<String> found_libs = new ArrayList<String>();
 	String bl = "base_library";
-	String bl_script_path = "script-library/fhir/" + pathPrefix  + "/base_library.js";
-	URL bl_script_src = ClassLoader.getSystemResource(bl_script_path);
+	String bl_script_path = "/script-library/fhir/" + pathPrefix  + "/base_library.js";
+	Resource bl_script_src = resourceLoader.getResource( bl_script_path);
 	String bl_script = null;
 	try {
-	    bl_script = new String(Files.readAllBytes(Paths.get(bl_script_src.toURI())) , StandardCharsets.UTF_8);
-	    json.add(bl, Json.createObjectBuilder()
-		     .add("source",bl_script)
-		);
+	    if ( bl_script_src.exists() && bl_script_src.isReadable() ) {
+		bl_script = IOUtils.toString(bl_script_src.getInputStream(), "UTF-8");
+		json.add(bl, Json.createObjectBuilder()
+			 .add("source",bl_script)
+		    );
+		log.info("found " +  bl_script_src.getURI());
+	    }
 	} catch (Exception e) {}
 
 	for (String resource: resources) {
@@ -77,30 +87,40 @@ public class ScriptLibraryJSONClassPathResource extends ScriptLibraryJSON {
 	    resource = resource.toLowerCase();
 
 	    for (int i=0; i < operations.length; i++) {
-
-		String rbl = "base_library";
-		String rbl_script_path = "script-library/fhir/" + pathPrefix  + "/" + resource + "_base_library.js";
-		URL rbl_script_src = ClassLoader.getSystemResource(rbl_script_path);
-		String rbl_script = null;
-		try {
-		    rbl_script = new String(Files.readAllBytes(Paths.get(rbl_script_src.toURI())) , StandardCharsets.UTF_8);
-		    json.add(rbl, Json.createObjectBuilder()
-			     .add("source",rbl_script)
-			);
-		} catch (Exception e) {}
-
 		String operation = operations[i];
-		String script_path = "script-library/fhir/" + pathPrefix + "/"  + resource + "_" +  operation + ".js";
-		log.info("checking " + script_path);
-		URL script_src = ClassLoader.getSystemResource(script_path);
-		String script;
+		String script_path = "/script-library/fhir/" + pathPrefix + "/"  + resource + "_" +  operation + ".js";
+		//log.info("checking " + script_path);
+		Resource script_src = resourceLoader.getResource(script_path);
+		String script = null;
 		try {
-		    script =  new String(Files.readAllBytes(Paths.get(script_src.toURI())) , StandardCharsets.UTF_8);
+		    if ( script_src.exists() && script_src.isReadable() ) {
+			script =  IOUtils.toString(script_src.getInputStream(), "UTF-8");
+			log.info("found " + script_src.getURI());
+		    }
 		} catch (Exception e) {
-		    log.info("not found " + script_path);
+		    //log.info("not found " + script_path + "\n" + e.toString());
+		    continue;
+		}
+		if (script == null) {
 		    continue;
 		}
 		//we have a script
+
+		String rbl = "base_library";
+		String rbl_script_path = "/script-library/fhir/" + pathPrefix  + "/" + resource + "_base_library.js";
+		Resource rbl_script_src = resourceLoader.getResource(   rbl_script_path);
+		String rbl_script = null;
+		try {
+		    if ( rbl_script_src.exists() && rbl_script_src.isReadable() ) {
+			rbl_script = IOUtils.toString(rbl_script_src.getInputStream(), "UTF-8");
+			json.add(rbl, Json.createObjectBuilder()
+				 .add("source",rbl_script)
+			    );
+			log.info("found " +  rbl_script_src.getURI());
+		    }
+		} catch (Exception e) {}
+
+
 		JsonArrayBuilder deps = Json.createArrayBuilder();
 		if ( bl_script != null) {
 		    deps.add(bl);
@@ -108,6 +128,7 @@ public class ScriptLibraryJSONClassPathResource extends ScriptLibraryJSON {
 		if ( rbl_script != null) {
 		    deps.add(rbl);
 		}
+
 		json.add( resource + "_" + operation, Json.createObjectBuilder()
 			  .add("source",script)
 			  .add("deps", deps)
@@ -116,5 +137,7 @@ public class ScriptLibraryJSONClassPathResource extends ScriptLibraryJSON {
 	}
 	return json.build();
     }
+
+
 
 }

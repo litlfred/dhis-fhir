@@ -59,9 +59,7 @@ public class ResourceController {
     protected  FHIRProcessor resourceProcessor;
 
     public ResourceController() {
-	//ScriptLibrary sl =new ScriptLibraryJSONClassPathResource(FHIRProcessor.resources[66],FHIRProcessor.RESOURCE_PATH,FHIRProcessor.operations);
-	String[] resources = {FHIRProcessor.resources[66]};
-	ScriptLibrary sl =new ScriptLibraryJSONClassPathResource(resources,FHIRProcessor.RESOURCE_PATH,FHIRProcessor.operations);
+	ScriptLibrary sl =new ScriptLibraryJSONClassPathResource(FHIRProcessor.resources,FHIRProcessor.RESOURCE_PATH,FHIRProcessor.operations);
 	resourceProcessor = new FHIRProcessor(sl);
     }
 

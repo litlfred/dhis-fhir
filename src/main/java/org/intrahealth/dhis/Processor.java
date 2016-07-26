@@ -133,7 +133,7 @@ public class Processor {
     {
 	String source;
 	try {
-	    log.info("Retrieving script" + script);
+	    log.info("Retrieving script " + script);
 	    source = sl.retrieveSource(script);
 	} catch (IOException e) {
 	    throw new ScriptNotFoundException("Could not retrieve script "  + script);

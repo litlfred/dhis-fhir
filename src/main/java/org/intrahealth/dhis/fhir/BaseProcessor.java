@@ -66,7 +66,7 @@ abstract public class BaseProcessor extends Processor {
     
     
     public String getOperationKey(String resource, String operation) {
-	return resource + "_" + operation;
+	return resource.toLowerCase() + "_" + operation;
     }
 
     public Boolean hasOperation(String resource, String operation) {
@@ -94,10 +94,7 @@ abstract public class BaseProcessor extends Processor {
     public void processJSONOperation(String resource, String operation, HttpServletRequest http_request, Object dhis_request ) 
 	throws IOException, DataFormatException, ScriptNotFoundException, ScriptException
     {
-	if (!hasOperation(resource,operation)) {
-	    throw new ScriptNotFoundException("No operation " + operation + " for " + resource);
-	}
-	log.info("beginning processing of " + operation +  " for " + resource);
+	log.info("beginning json processing of " + operation +  " for " + resource);
 	processScript(getOperationKey(resource,operation), http_request, dhis_request);
 	log.info("processed " + operation + " for " + resource);
 	if (! (dhis_response instanceof JsonObject)) {

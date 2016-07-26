@@ -91,6 +91,7 @@ public class FHIRProcessor extends BaseProcessor {
 	    http_response.getWriter().write(toJSONString((BaseResource) dhis_response));
 	    http_response.setStatus(HttpServletResponse.SC_OK);
 	} catch (ScriptNotFoundException e) {
+	    e.printStackTrace();		
 	    try {
 		http_response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"internal script processing error on json for read.\n" + e.toString());
 	    } catch (IOException ioe) {
@@ -118,6 +119,7 @@ public class FHIRProcessor extends BaseProcessor {
 	    http_response.getWriter().write(toXMLString((BaseResource) dhis_response));
 	    http_response.setStatus(HttpServletResponse.SC_OK);
 	} catch (ScriptNotFoundException e) {
+	    e.printStackTrace();		
 	    try {
 		http_response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"internal script processing error on json for read.\n" + e.toString());
 	    } catch (IOException ioe) {
