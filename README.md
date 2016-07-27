@@ -11,7 +11,8 @@ Makes use of generic base dynamic processing functionality that allows other API
 # Features
 * All public classes/methods in the DHIS api are available through a script engine                                     
 * engine.put("script_processor",this) is set before the script is evaluated, but after   any library dependencies are loaded.  this javascript has the following public variables set:                                                               
-** http_request    - the HttpServletRequest                                                                                  ** http_response   - the HttpServletResponse                                                                            
+** http_request    - the HttpServletRequest  
+** http_response   - the HttpServletResponse    
 ** script_out      - any output when evaluating the script                                                             
 ** script_request  - any arbitrary java object.  intended for use by a specific Controller (e.g. a FHIR controller)  
 ** script_response - intended for use by a specific Controller.  Example, the base FHIR processor will automatically attempt to convert this into a javax.json.JsonObject, ready for the business logic
