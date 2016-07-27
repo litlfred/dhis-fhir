@@ -114,8 +114,8 @@ public class ResourceController {
     {	
 	FHIRProcessor fp = getProcessor(app,resource,"read",http_request,http_response);
 	if ( fp  != null) {
-	    JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
-	    fp.process_read_json(resource,http_response,http_request,dhis_request);
+	    JsonObject script_request = Json.createObjectBuilder().add("_id",id).build();
+	    fp.process_read_json(resource,http_response,http_request,script_request);
 	}
     }
 
@@ -130,8 +130,8 @@ public class ResourceController {
     {
 	FHIRProcessor fp = getProcessor(app,resource,"read",http_request,http_response);
 	if ( fp  != null) {
-	    JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
-	    fp.process_read_json(resource,http_response,http_request,dhis_request);
+	    JsonObject script_request = Json.createObjectBuilder().add("_id",id).build();
+	    fp.process_read_json(resource,http_response,http_request,script_request);
 	}
     }
 /*
@@ -142,8 +142,8 @@ public class ResourceController {
 	)
     public void operation_retreive_xml( HttpServletResponse http_response, HttpServletRequest http_request, @PathVariable("id") String id ) throws IOException
     {
-	JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
-	fp.process_read_xml(http_response,http_request,dhis_request);
+	JsonObject script_request = Json.createObjectBuilder().add("_id",id).build();
+	fp.process_read_xml(http_response,http_request,script_request);
     }
 
     @RequestMapping( 
@@ -153,8 +153,8 @@ public class ResourceController {
 	)
     public void operation_retreive_xml_param( HttpServletResponse http_response, HttpServletRequest http_request, @RequestParam("_id") String id ) throws IOException
     {
-	JsonObject dhis_request = Json.createObjectBuilder().add("_id",id).build();
-	fp.process_read_xml(http_response,http_request,dhis_request);
+	JsonObject script_request = Json.createObjectBuilder().add("_id",id).build();
+	fp.process_read_xml(http_response,http_request,script_request);
     }
 
 */

@@ -82,13 +82,13 @@ public class FHIRProcessor extends BaseProcessor {
     }
 
      
-    public void process_read_json(String resource, HttpServletResponse http_response, HttpServletRequest http_request, JsonObject dhis_request ) 
+    public void process_read_json(String resource, HttpServletResponse http_response, HttpServletRequest http_request, JsonObject script_request ) 
     {
 	try {
-	    processJSONResourceOperation(resource, "read",http_request,dhis_request);
+	    processJSONResourceOperation(resource, "read",http_request,script_request);
 	    http_response.setContentType( FHIRProcessor.MIME_FHIR_JSON);
 	    http_response.setCharacterEncoding("UTF-8");
-	    http_response.getWriter().write(toJSONString((BaseResource) dhis_response));
+	    http_response.getWriter().write(toJSONString((BaseResource) script_response));
 	    http_response.setStatus(HttpServletResponse.SC_OK);
 	} catch (ScriptNotFoundException e) {
 	    e.printStackTrace();		
@@ -110,13 +110,13 @@ public class FHIRProcessor extends BaseProcessor {
 	}
     }
 
-    public void process_read_xml(String resource, HttpServletResponse http_response, HttpServletRequest http_request, JsonObject dhis_request ) 
+    public void process_read_xml(String resource, HttpServletResponse http_response, HttpServletRequest http_request, JsonObject script_request ) 
     {
 	try {
-	    processJSONResourceOperation(resource, "read",http_request,dhis_request);
+	    processJSONResourceOperation(resource, "read",http_request,script_request);
 	    http_response.setContentType( FHIRProcessor.MIME_FHIR_XML);
 	    http_response.setCharacterEncoding("UTF-8");
-	    http_response.getWriter().write(toXMLString((BaseResource) dhis_response));
+	    http_response.getWriter().write(toXMLString((BaseResource) script_response));
 	    http_response.setStatus(HttpServletResponse.SC_OK);
 	} catch (ScriptNotFoundException e) {
 	    e.printStackTrace();		

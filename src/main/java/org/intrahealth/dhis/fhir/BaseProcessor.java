@@ -46,6 +46,7 @@ import javax.json.JsonReader;
 import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.hisp.dhis.datavalue.DefaultDataValueService;
 import org.intrahealth.dhis.scriptlibrary.Processor;
 import org.intrahealth.dhis.scriptlibrary.ScriptLibrary;
@@ -79,39 +80,39 @@ abstract public class BaseProcessor extends Processor {
     }
 
 
-    protected void processJSONResourceOperation(String resource, String operation, HttpServletRequest http_request, JsonObject dhis_request ) 
+    protected void processJSONResourceOperation(String resource, String operation, HttpServletRequest http_request, JsonObject script_request ) 
 	throws IOException, DataFormatException, ScriptNotFoundException, ScriptException
     {
 	log.info("beginning resource processing of " + operation + " for " + resource);
-	processJSONOperation(resource,operation,http_request,dhis_request);
+	processJSONOperation(resource,operation,http_request,script_request);
 	log.info("processed " + operation + " for" +resource);
-	dhis_response = resourceFromJSON( (JsonObject) dhis_response);
+	script_response = resourceFromJSON( (JsonObject) script_response);
     }
 
-    protected void processJSONBundleOperation(String resource, String operation,HttpServletRequest http_request, JsonObject dhis_request ) 
+    protected void processJSONBundleOperation(String resource, String operation,HttpServletRequest http_request, JsonObject script_request ) 
 	throws IOException, DataFormatException, ScriptNotFoundException, ScriptException
     {
-	processJSONOperation(resource,operation,http_request,dhis_request);
-	dhis_response = bundleFromJSON( (JsonObject) dhis_response);
+	processJSONOperation(resource,operation,http_request,script_request);
+	script_response = bundleFromJSON( (JsonObject) script_response);
     }
 
 
-    public void processJSONOperation(String resource, String operation, HttpServletRequest http_request, Object dhis_request ) 
+    public void processJSONOperation(String resource, String operation, HttpServletRequest http_request, Object script_request ) 
 	throws IOException, DataFormatException, ScriptNotFoundException, ScriptException
     {
 	log.info("beginning json processing of " + operation +  " for " + resource);
-	processScript(getOperationKey(resource,operation) + ".js" , http_request, dhis_request);
+	processScript(getOperationKey(resource,operation) + ".js" , http_request, script_request);
 	log.info("processed " + operation + " for " + resource);
-	if (dhis_response instanceof ScriptObjectMirror) {
-	    dhis_response = toJsonObject((ScriptObjectMirror) dhis_response);
+	if (script_response instanceof ScriptObjectMirror) {
+	    script_response = toJsonObject((ScriptObjectMirror) script_response);
 	}
-	if (! (dhis_response instanceof JsonObject)) {	    
-	    if (dhis_response != null) {
-		log.info(dhis_response.toString());
+	if (! (script_response instanceof JsonObject)) {	    
+	    if (script_response != null) {
+		log.info(script_response.toString());
 	    } else {
-		log.info("null for dhis_response");
+		log.info("null for script_response");
 	    }
-	    throw new DataFormatException("JSON object not found in dhis_response for operation " + operation + " for "  + resource  + "\n:");
+	    throw new DataFormatException("JSON object not found in script_response for operation " + operation + " for "  + resource  + "\n:");
 	}
     }
 
