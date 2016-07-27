@@ -50,6 +50,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.appmanager.App;
 import org.hisp.dhis.appmanager.AppManager;
 import org.hisp.dhis.appmanager.AppStatus;
+import org.hisp.dhis.appmanager.DefaultAppManager;
 import org.hisp.dhis.datavalue.DefaultDataValueService;
 import org.hisp.dhis.render.DefaultRenderService;
 import org.intrahealth.dhis.scriptlibrary.ScriptLibrary;
@@ -69,6 +70,9 @@ public class AppScriptLibrary implements ScriptLibrary {
     private final ResourceLoader resourceLoader = new DefaultResourceLoader();    
     @Autowired
     private  AppManager appManager; //not sure how this gets set!
+    //<bean id="org.hisp.dhis.appmanager.AppManager" class="org.hisp.dhis.appmanager.DefaultAppManager" />
+    //in ./dhis-services/dhis-service-core/target/classes/META-INF/dhis/beans.xml
+    //private AppManager appManager = new DefaultAppManager();
     protected Iterable<Resource> scriptLocations;
     protected String app;
     protected String[] resources;

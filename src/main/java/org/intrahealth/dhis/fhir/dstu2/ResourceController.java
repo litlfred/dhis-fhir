@@ -42,7 +42,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.hisp.dhis.appmanager.App;
 import org.hisp.dhis.appmanager.AppManager;
 import org.hisp.dhis.appmanager.AppStatus;
+import org.hisp.dhis.appmanager.DefaultAppManager;
 import org.hisp.dhis.user.CurrentUserService;
+import org.hisp.dhis.user.DefaultCurrentUserService;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserService;
 import org.hisp.dhis.webapi.service.ContextService;
@@ -69,8 +71,12 @@ public class ResourceController {
     protected Map<String,FHIRProcessor> FHIRProcessors = new HashMap<String,FHIRProcessor>();
     @Autowired
     private CurrentUserService currentUserService;
+    //private CurrentUserService currentUserService = new DefaultCurrentUserService();
     @Autowired
     private  AppManager appManager; //not sure how this gets set!
+    //<bean id="org.hisp.dhis.appmanager.AppManager" class="org.hisp.dhis.appmanager.DefaultAppManager" />
+    //in ./dhis-services/dhis-service-core/target/classes/META-INF/dhis/beans.xml
+    //private AppManager appManager = new DefaultAppManager();
 
     protected FHIRProcessor getProcessor(String app,String resource,String operation,HttpServletRequest http_request, HttpServletResponse http_response) {
         String contextPath = ContextUtils.getContextPath( http_request );
