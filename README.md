@@ -28,7 +28,7 @@ Makes use of generic base dynamic processing functionality that allows other API
 # Controllers
 Two controllers are provided.  
 *  scriptlibrary.exec package has ScriptExecController which will take a URL such as http://localhost:8080/script-library/{app}/exec/{script} and do a simple eval of the indicated script.  The script should live the DHIS2 Web App under the directory script-library/exec
-*  fhir.dstu2 package has ResourceContoller which will take a FHIR URLs such as http://localhost:8080/script-library/{app}/fhir/dstu2/{resource}/{operation} and execute the script {resource}_{operation}.js. THe ReosurceController uses  FHIR processor will automatically attempt to convert between XML and JSON representations of FHIR resources and convert script_response  into a javax.json.JsonObject, ready for further business logic.
+*  fhir.dstu2 package has ResourceContoller which will take a FHIR URLs such as http://localhost:8080/script-library/{app}/fhir/dstu2/{resource}/{operation} and execute the script {resource}_{operation}.js. The ReosurceController uses  FHIR processor will automatically attempt to convert between XML and JSON representations of FHIR resources and convert script_response  into a javax.json.JsonObject, ready for further business logic.  The script should live the DHIS2 Web App under the directory script-library/fhir/dstu2
 
 # Building
 In order to build, this should be dropped into dhis2 source at dhis-2/dhis2-web-api.  You then need to edit a couple of files:
