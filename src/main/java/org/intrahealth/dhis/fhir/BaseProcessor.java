@@ -46,7 +46,6 @@ import javax.json.JsonReader;
 import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.hisp.dhis.datavalue.DefaultDataValueService;
 import org.intrahealth.dhis.scriptlibrary.Processor;
 import org.intrahealth.dhis.scriptlibrary.ScriptLibrary;
