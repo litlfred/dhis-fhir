@@ -103,6 +103,8 @@ public class ResourceController {
 	}
     }
 
+    
+
     @RequestMapping( 
 	value =  "/{resource}/{id}",
 	method = RequestMethod.GET, 

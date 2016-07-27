@@ -14,14 +14,14 @@
   </parent>
 
   <build>
-    <finalName>dhis-web-script-library</finalName>
+    <finalName>test_patient</finalName>
     <plugins>
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-assembly-plugin</artifactId>
 	<configuration>
 	  <descriptors>
-	    <descriptor>apps/zip-test.xml</descriptor>
+	    <descriptor>apps/zip.xml</descriptor>
 	  </descriptors>
 	</configuration>
 	<executions>

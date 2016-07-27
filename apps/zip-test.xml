@@ -5,9 +5,10 @@
   <formats>
     <format>zip</format>
   </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>apps/test_patient</directory>
+      <directory>./apps/test_patient</directory>
       <outputDirectory>/</outputDirectory>
     </fileSet>
   </fileSets>
