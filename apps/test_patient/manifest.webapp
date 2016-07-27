@@ -1,11 +1,10 @@
-
 {
     "version": "0.1",
     "name": "FHIR DSTU2 Test -  Patient Resource",
     "description": "Simple Test App for FHIR Patient Resource"
     "launch_path": "index.html",
     "developer": {
-        "name": "Carl Leitner",
+        "name": "Carl Leitner <litlfred@gmail.com>",
         "url": "http://github.com/litlfred/dhis-web-script-library"
     },
     "default_locale": "en",
@@ -13,7 +12,14 @@
         "dhis": {
             "href": "*"
         }
-    }
-    
+    },
+    "script-library": {
+        "dependencies" : {
+           "patient_read.js" : [
+	     "base_library.js",
+	     "base_patientlibrary.js"
+	   ]
+	}
+      }    
 }
 
