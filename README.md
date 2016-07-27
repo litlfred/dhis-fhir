@@ -17,7 +17,7 @@ Makes use of generic base dynamic processing functionality that allows other API
 **  script_request  - any arbitrary java object.  intended for use by a specific Controller (e.g. a FHIR controller)  
 **  script_response - intended for use by a specific Controller.  Example, the base FHIR processor will automatically attempt to convert this into a javax.json.JsonObject, ready for the business logic
 **  (streams)       - IO Streams for script execution are in SteamReader in, StreamWriter error & out
-**  etc. -            Exposing new variables is simple.  note: context is aleady exposed. add User? App?    * 3) there are no
+**  etc. -            Exposing new variables is simple.  note: context is aleady exposed. add User? App?    
 *  there are no requirements on the script being run.  however, if the script sets the     variable script_processor.script_response, then the processor will automatically attempt           to covert the into a javax.io.java object which can then be processed by a controller                                          
 *  the script engine searches for avilable resources via a ScriptLibrary that provides             a dependency list of script libraries that need to be eval'd before the script is run
 *  currenlty has .js support with nashorn enabled,   others available javax.java.ScriptEngines can simply be turned on via a Map.   Possibilites include:
