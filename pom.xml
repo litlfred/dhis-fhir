@@ -1,20 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.intrahealth</groupId>
-  <artifactId>dhis-web-script-library</artifactId>
-  <name>DHIS2 Script Library</name>
-  <url>http://dhis2.org</url>
-  <packaging>war</packaging>
 
   <parent>
     <groupId>org.hisp.dhis</groupId>
-    <artifactId>dhis</artifactId>
+    <artifactId>dhis-web</artifactId>
     <version>2.24-SNAPSHOT</version>
   </parent>
 
+  <artifactId>dhis-web-script-library</artifactId>
+  <packaging>war</packaging>
+  <name>DHIS Script Library</name>
+
   <build>
-    <finalName>test_patient</finalName>
+    <finalName>dhis-web-script-library</finalName>
     <plugins>
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
@@ -37,14 +36,7 @@
     </plugins>
   </build>
 
-
-
   <dependencies>
-    <dependency>
-      <groupId>org.hisp.dhis</groupId>
-      <artifactId>dhis-api</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>ca.uhn.hapi.fhir</groupId>
       <artifactId>hapi-fhir-base</artifactId>
@@ -55,18 +47,43 @@
       <artifactId>hapi-fhir-structures-dstu2</artifactId>
       <version>1.4</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.hisp.dhis</groupId>
+      <artifactId>dhis-web-commons</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hisp.dhis</groupId>
+      <artifactId>dhis-web-commons-resources</artifactId>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hisp.dhis</groupId>
+      <artifactId>dhis-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hisp.dhis</groupId>
+      <artifactId>dhis-web-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hisp.dhis</groupId>
+      <artifactId>dhis-support-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hisp.dhis</groupId>
+      <artifactId>dhis-service-dxf2</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.hisp.dhis</groupId>
       <artifactId>dhis-service-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.hisp.dhis</groupId>
-      <artifactId>dhis-web-api</artifactId>
-      <version>2.24-SNAPSHOT</version>  <!--probably needs to be fixed -->
+      <artifactId>dhis-service-administration</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
+      <groupId>org.hisp.dhis</groupId>
+      <artifactId>dhis-service-reporting</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -77,13 +94,45 @@
       <artifactId>spring-context</artifactId>
     </dependency>
     <dependency>
-       <groupId>org.javassist</groupId>
-      <artifactId>javassist</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.hateoas</groupId>
+      <artifactId>spring-hateoas</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-oxm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+    </dependency>
+    
+    <!-- Test -->
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
     
   </dependencies>
 
   <properties>
-    <rootDir>/Users/litlfred/pulsar_cats/dhis2/dhis-2</rootDir>
+    <rootDir>../../</rootDir>
   </properties>
 </project>
