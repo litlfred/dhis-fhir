@@ -2,7 +2,7 @@ package org.intrahealth.dhis.fhir.dstu2;
 /*
  * Copyright (c) 2016, IntraHealth International
  * All rights reserved.
- * GPL v3
+ * Apache 2.0
  * Carl Leitner <litlfred@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,9 +49,9 @@ import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserService;
 import org.hisp.dhis.webapi.service.ContextService;
 import org.hisp.dhis.webapi.utils.ContextUtils;
+import org.intrahealth.dhis.scriptlibrary.AppScriptLibrary;
 import org.intrahealth.dhis.fhir.dstu2.FHIRProcessor;
 import org.intrahealth.dhis.scriptlibrary.ScriptLibrary;
-import org.intrahealth.dhis.scriptlibrary.AppScriptLibrary;
 import org.springframework.stereotype.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

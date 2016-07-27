@@ -2,7 +2,7 @@ package org.intrahealth.dhis.fhir.dstu2;
 /*
  * Copyright (c) 2016, IntraHealth International
  * All rights reserved.
- * GPL v3
+ * Apache 2.0
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -95,16 +95,22 @@ public class FHIRProcessor extends BaseProcessor {
 	    try {
 		http_response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"internal script processing error on json for read.\n" + e.toString());
 	    } catch (IOException ioe) {
-		log.info("Could not send http response: " + ioe.toString());
+		try {
+		    log.info("Could not send http response: " + ioe.toString());
+		} catch (Exception e2) {}
 	    }
-	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,e.toString());
+	    try {
+		http_response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED,e.toString());
+	    } catch (Exception e2) {}
 	    return ;
 	} catch (Exception e) {
 	    e.printStackTrace();		
 	    try {
 		http_response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"internal script processing error on json for read.\n" + e.toString());
 	    } catch (IOException ioe) {
-		log.info("Could not send http response: " + ioe.toString());
+		try {
+		    log.info("Could not send http response: " + ioe.toString());
+		} catch (Exception e2) {}
 	    }
 	    return ;
 	}
@@ -123,22 +129,24 @@ public class FHIRProcessor extends BaseProcessor {
 	    try {
 		http_response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"internal script processing error on json for read.\n" + e.toString());
 	    } catch (IOException ioe) {
-		log.info("Could not send http response: " + ioe.toString());
+		try {
+		    log.info("Could not send http response: " + ioe.toString());
+		} catch (Exception e2) {}
 	    }
-	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,e.toString());
+	    try {
+		http_response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED,e.toString());
+	    } catch (Exception e2) {}
 	    return ;
 	} catch (Exception e) {
 	    e.printStackTrace();		
 	    try {
 		http_response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"internal script processing error on json for read.\n" + e.toString());
 	    } catch (IOException ioe) {
-		log.info("Could not send http response:" + ioe.toString());
+		try {
+		    log.info("Could not send http response: " + ioe.toString());
+		} catch (Exception e2) {}
 	    }
 	    return ;
 	}
     }
-
-
-    
-
 }

@@ -2,7 +2,7 @@ package org.intrahealth.dhis.scriptlibrary;
 /*
  * Copyright (c) 2016, IntraHealth International
  * All rights reserved.
- * GPL v3
+ * Apache 2.0
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -85,11 +85,20 @@ public class AppScriptLibrary implements ScriptLibrary {
 	this.pathPrefix = pathPrefix;
 	this.resources = resources;
 	this.operations = operations;	
-	this.scriptLocations = Lists.newArrayList(
-            resourceLoader.getResource( "file:" + appManager.getAppFolderPath() + "/" + app + "/script-library/"  + pathPrefix + "/"),
-            resourceLoader.getResource( "classpath*:/apps/" + app + "/script-library/"  + pathPrefix + "/" ),
-            resourceLoader.getResource( "/apps/" + app + "/script-library/"  + pathPrefix + "/" )
-	    );
+	try {
+	    this.scriptLocations = Lists.newArrayList(
+		resourceLoader.getResource( "file:" + appManager.getAppFolderPath() + "/" + app + "/script-library/"  + pathPrefix + "/"),
+		resourceLoader.getResource( "classpath*:/apps/" + app + "/script-library/"  + pathPrefix + "/" ),
+		resourceLoader.getResource( "/apps/" + app + "/script-library/"  + pathPrefix + "/" )
+		);
+	} catch (Exception e) {
+	    try {
+		log.info("Could not init AppScriptLibrary" + e.toString());
+		if (appManager == null) {
+		    log.info("appManager not initialized");
+		}
+	    } catch (Exception e2) {}
+	}
     }
 
     protected JsonObject loadDependencies() {

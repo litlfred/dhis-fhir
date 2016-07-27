@@ -2,7 +2,7 @@ package org.intrahealth.dhis.scriptlibrary;
 /*
  * Copyright (c) 2016, IntraHealth International
  * All rights reserved.
- * GPL v3
+ * Apache 2.0
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -85,7 +85,7 @@ public class Processor {
      *    can simply be turned on via a Map.   Possibilites include:
      *       * .R with Renjin
      *       * .ruby with jruby
-     * 6) 
+     * 
      */
 
     /*
@@ -184,6 +184,13 @@ public class Processor {
 	return sl.containsScript(script);
     }
 
+
+    public Object  processScript(String script, HttpServletRequest http_request)
+	throws ScriptException, ScriptNotFoundException
+    {
+	return processScript(script,http_request);
+    }
+
     public Object  processScript(String script, HttpServletRequest http_request, Object script_request) 
 	throws ScriptException, ScriptNotFoundException
     {
@@ -208,7 +215,7 @@ public class Processor {
 	this.script_request = script_request;
 	return eval(js);
     }
-    public Object  processRequest(HttpServletRequest  http_quest, Object script_request,String js) 
+    public Object  processRequest(HttpServletRequest  http_request, Object script_request,String js) 
 	throws ScriptException
     {
 	this.http_request = http_request;
