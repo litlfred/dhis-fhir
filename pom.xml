@@ -21,7 +21,7 @@
 	<artifactId>maven-assembly-plugin</artifactId>
 	<configuration>
 	  <descriptors>
-	    <descriptor>apps/zip.xml</descriptor>
+	    <descriptor>apps/zip-test.xml</descriptor>
 	  </descriptors>
 	</configuration>
 	<executions>

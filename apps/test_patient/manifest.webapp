@@ -1,7 +1,7 @@
 {
     "version": "0.1",
     "name": "FHIR DSTU2 Test -  Patient Resource",
-    "description": "Simple Test App for FHIR Patient Resource"
+    "description": "Simple Test App for FHIR Patient Resource",
     "launch_path": "index.html",
     "developer": {
         "name": "Carl Leitner <litlfred@gmail.com>",
@@ -17,9 +17,9 @@
         "dependencies" : {
            "patient_read.js" : [
 	     "base_library.js",
-	     "base_patientlibrary.js"
+	     "patient_base_library.js"
 	   ]
-	}
-      }    
+        }
+    }    
 }
 

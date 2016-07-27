@@ -128,7 +128,7 @@ public class ResourceController {
 	)
     public void operation_read_json_param( HttpServletResponse http_response, HttpServletRequest http_request,
 					   @PathVariable("app") String app,
-					   @PathVariable("id") String id  , @PathVariable("resource") String resource) 
+					   @RequestParam("_id") String id  , @PathVariable("resource") String resource) 
     {
 	FHIRProcessor fp = getProcessor(app,resource,"read",http_request,http_response);
 	if ( fp  != null) {

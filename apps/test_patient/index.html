@@ -1,10 +1,32 @@
-<html>
-  <head/>
+<html  xmlns="http://www.w3.org/1999/xhtml">
+  <head >
+    <title>fhir patient dstu2 test</title>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/jquery.min.js"/>
+    <script type="text/javascript" >
+
+$(function() {    
+       var base_url = window.location.href.substring(0, window.location.href.indexOf('/api/apps/csd-loader'));
+       $.(document.getElementsByName("form")).each(function (form) {
+       //not working: form.setAttribute("action",base_url + form.getAttribute("action"));
+       });
+       
+
+
+});
+    </script>
+  </head>
   <body>
-    Impleents the following API endpoints:
+    Implements the following API endpoints:
     <ul>
-      <li>GET fhir/dstu2/Patient/{id}</li>
-      <li>GET fhir/dstu2/Patient?_id={id}</li>
-    </ul>    
+      <li>GET fhir/dstu2/Patient/{id}      </li>
+      <li>GET fhir/dstu2/Patient?_{id}      </li>
+    </ul>
+    <form action="http://localhost:8080/script-library/test_patient-bin/fhir/dstu2/Patient" >
+      <p>
+	ID: <input name="_id" type="text" value='example'/>
+	<input type="submit" value="Go"/>
+      </p>
+    </form>
+    <p>http://localhost:8080/script-library/test_patient-bin/fhir/dstu2/Patient?_id=example</p>
   </body>
 </html>
