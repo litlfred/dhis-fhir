@@ -104,6 +104,11 @@
       <artifactId>javax.servlet-api</artifactId>
     </dependency>
     <dependency>
+      <groupId>javax.json</groupId>
+      <artifactId>javax.json-api</artifactId>
+      <version>1.0</version>
+      </dependency>
+    <dependency>
       <groupId>com.jayway.jsonpath</groupId>
       <artifactId>json-path</artifactId>
     </dependency>

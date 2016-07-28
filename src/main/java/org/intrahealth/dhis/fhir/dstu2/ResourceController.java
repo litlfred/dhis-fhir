@@ -77,8 +77,8 @@ public class ResourceController {
     //<bean id="org.hisp.dhis.appmanager.AppManager" class="org.hisp.dhis.appmanager.DefaultAppManager" />
     //in ./dhis-services/dhis-service-core/target/classes/META-INF/dhis/beans.xml
     //private AppManager appManager = new DefaultAppManager();
-    @Autowired
-    protected ContextService contextService;
+//    @Autowired
+//    protected ContextService contextService;
 
 
     protected FHIRProcessor getProcessor(String app,String resource,String operation,HttpServletRequest http_request, HttpServletResponse http_response) {
@@ -99,11 +99,10 @@ public class ResourceController {
 	if (fp == null) {
 	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"App " + app + " does not exist");
 	    return null;
-//	}  else if ( !appManager.isAccessible( a,user)) {
-//	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"Permision denied for " + app);
-//	    return null;
-//
-//   removed b/c kept getting:
+	}  else if ( !appManager.isAccessible( a,user)) {
+	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"Permision denied for " + app);
+	    return null;
+
 //
 //	org.springframework.web.util.NestedServletException: Request processing failed; nested exception is org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: org.hisp.dhis.user.UserCredentials.userAuthorityGroups, could not initialize proxy - no Session
 //											    at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:980)
