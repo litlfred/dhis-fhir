@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0">
-  <display-name>DHIS Script Library</display-name>
+  <display-name>DHIS Script Library - FHIR </display-name>
 
   <context-param>
     <param-name>contextConfigLocation</param-name>
@@ -41,22 +41,22 @@
   <!-- Web API -->
 
   <servlet>
-    <servlet-name>scriptLibraryServlet</servlet-name>
+    <servlet-name>scriptLibraryFHIRServlet</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <init-param>
       <param-name>contextConfigLocation</param-name>
-      <param-value>classpath*:/META-INF/scriptLibraryServlet.xml</param-value>
+      <param-value>classpath*:/META-INF/scriptLibraryFhirServlet.xml</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
     <async-supported>true</async-supported>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>scriptLibraryServlet</servlet-name>
+    <servlet-name>scriptLibraryFHIRServlet</servlet-name>
     <url-pattern>/script-library</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>scriptLibraryServlet</servlet-name>
+    <servlet-name>scriptLibraryFHIRServlet</servlet-name>
     <url-pattern>/script-library/*</url-pattern>
   </servlet-mapping>
 
