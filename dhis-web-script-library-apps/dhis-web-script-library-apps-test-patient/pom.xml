@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.intrahealth.dhis</groupId>
+    <artifactId>dhis-web-script-library-apps</artifactId>
+    <version>2.24-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>dhis-web-script-library-apps-test-patient</artifactId>
+  <groupId>org.intrahealth.dhis</groupId>
+  <packaging>pom</packaging>
+  <name>DHIS Script Library Apps - Test Patient</name>
+
+  <build>
+    <finalName>test-patient</finalName>
+    <plugins>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-assembly-plugin</artifactId>
+	<configuration>
+	  <descriptors>
+	    <descriptor>zip.xml</descriptor>
+	  </descriptors>
+	</configuration>
+	<executions>
+	  <execution>
+	    <id>make-assembly</id>
+	    <phase>package</phase>
+	    <goals>
+	      <goal>single</goal>
+	    </goals>
+	  </execution>
+	</executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

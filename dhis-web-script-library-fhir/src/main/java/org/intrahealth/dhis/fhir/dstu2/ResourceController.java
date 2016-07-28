@@ -99,9 +99,9 @@ public class ResourceController {
 	if (fp == null) {
 	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"App " + app + " does not exist");
 	    return null;
-	}  else if ( !appManager.isAccessible( a,user)) {
-	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"Permision denied for " + app);
-	    return null;
+//	}  else if ( !appManager.isAccessible( a,user)) {
+//	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"Permision denied for " + app);
+//	    return null;
 
 //
 //	org.springframework.web.util.NestedServletException: Request processing failed; nested exception is org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: org.hisp.dhis.user.UserCredentials.userAuthorityGroups, could not initialize proxy - no Session

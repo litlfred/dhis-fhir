@@ -2,23 +2,16 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+
   <parent>
-    <groupId>org.hisp.dhis</groupId>
-    <artifactId>dhis-web</artifactId>
+    <groupId>org.intrahealth.dhis</groupId>
+    <artifactId>dhis-web-script-library</artifactId>
     <version>2.24-SNAPSHOT</version>
   </parent>
 
-  <artifactId>dhis-web-script-library</artifactId>
+  <artifactId>dhis-web-script-library-core</artifactId>
   <groupId>org.intrahealth.dhis</groupId>
-  <packaging>pom</packaging>
-  <name>DHIS Script Library</name>
-
-  <modules>
-    <module>dhis-web-script-library-core</module>
-    <module>dhis-web-script-library-fhir</module>
-    <module>dhis-web-script-library-apps</module>
-  </modules>
-
+  <name>DHIS Script Library Core</name>
 
   <dependencies>
     <dependency>
@@ -100,17 +93,6 @@
       <artifactId>hamcrest-library</artifactId>
     </dependency>
     
-    <dependency>
-      <groupId>ca.uhn.hapi.fhir</groupId>
-      <artifactId>hapi-fhir-base</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
-      <groupId>ca.uhn.hapi.fhir</groupId>
-      <artifactId>hapi-fhir-structures-dstu2</artifactId>
-      <version>1.4</version>
-    </dependency>
-
 
     <!-- Test -->
     
@@ -121,26 +103,6 @@
     </dependency>
     
   </dependencies>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.intrahealth.dhis</groupId>
-        <artifactId>dhis-web-script-library-core</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.intrahealth.dhis</groupId>
-        <artifactId>dhis-web-script-library-fhir</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.intrahealth.dhis</groupId>
-        <artifactId>dhis-web-script-library-apps</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-      
 
   <properties>
     <rootDir>../../</rootDir>
