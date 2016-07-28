@@ -9,6 +9,7 @@
   </parent>
 
   <artifactId>dhis-web-script-library</artifactId>
+  <groupId>org.intrahealth.dhis</groupId>
   <packaging>war</packaging>
   <name>DHIS Script Library</name>
 
@@ -37,17 +38,6 @@
   </build>
 
   <dependencies>
-    <dependency>
-      <groupId>ca.uhn.hapi.fhir</groupId>
-      <artifactId>hapi-fhir-base</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
-      <groupId>ca.uhn.hapi.fhir</groupId>
-      <artifactId>hapi-fhir-structures-dstu2</artifactId>
-      <version>1.4</version>
-    </dependency>
-
     <dependency>
       <groupId>org.hisp.dhis</groupId>
       <artifactId>dhis-web-commons</artifactId>
