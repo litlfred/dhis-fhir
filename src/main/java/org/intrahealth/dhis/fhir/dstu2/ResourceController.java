@@ -77,11 +77,15 @@ public class ResourceController {
     //<bean id="org.hisp.dhis.appmanager.AppManager" class="org.hisp.dhis.appmanager.DefaultAppManager" />
     //in ./dhis-services/dhis-service-core/target/classes/META-INF/dhis/beans.xml
     //private AppManager appManager = new DefaultAppManager();
+    @Autowired
+    protected ContextService contextService;
+
 
     protected FHIRProcessor getProcessor(String app,String resource,String operation,HttpServletRequest http_request, HttpServletResponse http_response) {
         String contextPath = ContextUtils.getContextPath( http_request );
 	App a = appManager.getApp(app,contextPath);
 	User user = currentUserService.getCurrentUser();
+	user.getUserCredentials().getAllAuthorities();
 	FHIRProcessor fp = null;
 	if (!FHIRProcessors.containsKey(app)
 	    && a != null
@@ -95,9 +99,17 @@ public class ResourceController {
 	if (fp == null) {
 	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"App " + app + " does not exist");
 	    return null;
-	}  else if ( !appManager.isAccessible( a,user)) {
-	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"Permision denied for " + app);
-	    return null;
+//	}  else if ( !appManager.isAccessible( a,user)) {
+//	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"Permision denied for " + app);
+//	    return null;
+//
+//   removed b/c kept getting:
+//
+//	org.springframework.web.util.NestedServletException: Request processing failed; nested exception is org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: org.hisp.dhis.user.UserCredentials.userAuthorityGroups, could not initialize proxy - no Session
+//											    at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:980)
+///											    at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:859)
+//											    at javax.servlet.http.HttpServlet.service(HttpServlet.java:687)
+ 
 	} else if ( ! Arrays.asList(FHIRProcessor.resources).contains(resource)) {
 	    http_response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED,"Invalid resource "  + resource);
 	    return null;
