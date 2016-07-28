@@ -48,6 +48,20 @@ $ bzr diff
 +      <type>war</type>
 +    </dependency>
 
+
+
+=== modified file 'dhis-2/dhis-web/pom.xml'
+--- dhis-2/dhis-web/pom.xml     2016-05-02 05:52:44 +0000
++++ dhis-2/dhis-web/pom.xml     2016-07-27 20:42:07 +0000
+@@ -29,6 +29,7 @@
+     <module>dhis-web-mobile</module>
+     <module>dhis-web-sms</module>
+     <module>dhis-web-apps</module>
++    <module>dhis-web-script-library</module>
+     <module>dhis-web-portal</module>
+   </modules>
+
+
 === modified file 'dhis-2/dhis-web/dhis-web-portal/src/main/webapp/WEB-INF/web.xml'
 --- dhis-2/dhis-web/dhis-web-portal/src/main/webapp/WEB-INF/web.xml     2016-05-01 07:45:30 +0000
 +++ dhis-2/dhis-web/dhis-web-portal/src/main/webapp/WEB-INF/web.xml     2016-07-27 04:45:06 +0000
