@@ -17,7 +17,6 @@
       <groupId>org.intrahealth..dhis</groupId>
       <artifactId>dhis-web-script-library-core</artifactId>
       <version>${project.version}</version>
-      <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.hisp.dhis</groupId>
