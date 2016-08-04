@@ -58,7 +58,7 @@ import org.intrahealth.dhis.scriptlibrary.ScriptExecutionException;
 /**                                                                                                                                                                                 
  * @author Carl Leitner <litlfred@gmail.com>
  */
-public class Processor {
+public class Processor implements IProcessor{
     
     /*
      * 1) All public classes/methods in the DHIS api are available through a script engine
@@ -122,7 +122,7 @@ public class Processor {
 
 
 
-    protected void  initEngine(String ext, String[] jslibs,HttpServletRequest http_request, HttpServletResponse http_reponse) 
+    public void  initEngine(String ext, String[] libs,HttpServletRequest http_request, HttpServletResponse http_reponse) 
 	throws ScriptException
     {
 	script_response = null;
@@ -147,7 +147,7 @@ public class Processor {
 	engine.put("script_processor",this);
 	//load up any referenced libraries
 	Stack<String> deps = new Stack<String>();
-	deps.addAll(Arrays.asList(jslibs));
+	deps.addAll(Arrays.asList(libs));
 	
 	ArrayList seen = new ArrayList();
 	while(! deps.isEmpty()) {
@@ -208,14 +208,14 @@ public class Processor {
 	return processRequest(http_request, script_request,source);
     }
 
-    public Object processRequest(HttpServletRequest  http_request, Object script_request,Reader js) 
+    protected Object processRequest(HttpServletRequest  http_request, Object script_request,Reader js) 
 	throws ScriptException
     {
 	this.http_request = http_request;
 	this.script_request = script_request;
 	return eval(js);
     }
-    public Object  processRequest(HttpServletRequest  http_request, Object script_request,String js) 
+    protected Object  processRequest(HttpServletRequest  http_request, Object script_request,String js) 
 	throws ScriptException
     {
 	this.http_request = http_request;
@@ -224,28 +224,30 @@ public class Processor {
 	return eval(js);
     }
     
-    protected void clearErrors() {
+    public void clearErrors() {
 	error =new StringWriter();
 	ctx.setErrorWriter(error);
     }
-    protected void clearOut() {
+    public void clearOut() {
 	out =new StringWriter();
 	ctx.setWriter(out);
     }
 
 
-    protected void checkErrors() throws ScriptExecutionException {
+    public String checkErrors() throws ScriptExecutionException {
 	String e =  error.toString();
 	if ( (e != null) && (e.length() > 0)) {
 	    log.info("Errors:\n" +e);
 	}
+	return e;
     }
 
-    protected void checkOut() throws ScriptExecutionException {
+    public String checkOut() throws ScriptExecutionException {
 	String e =  out.toString();
 	if ( (e != null) && (e.length() > 0)) {
 	    log.info("Out:\n" + e);
 	}
+	return e;
     }
 
 

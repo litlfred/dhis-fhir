@@ -9,6 +9,7 @@
   </parent>
 
   <artifactId>dhis-web-script-library-fhir</artifactId>
+  <packaging>war</packaging>
   <groupId>org.intrahealth.dhis</groupId>
   <name>DHIS Script Library FHIR</name>
 
