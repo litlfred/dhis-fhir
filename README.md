@@ -1,4 +1,8 @@
-# dhis-web-script-libray
+Further development has been moved to:
+   https://code.launchpad.net/~litlfred/dhis2/script-library
+
+
+#dhis-web-script-libray
 This project adds support for DHIS2 Server-Side Apps with dynamic scripting .js scripting support leveraging the existing DHIS2 Web App.
 * scriptlibrary package: https://github.com/litlfred/dhis-web-script-library/tree/master/src/main/java/org/intrahealth/dhis/scriptlibrary
 
