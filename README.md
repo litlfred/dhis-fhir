@@ -1,5 +1,5 @@
 Further development has been moved to:
-   https://code.launchpad.net/~litlfred/dhis2/script-library
+   https://github.com/litlfred/dhis2-core/tree/script-library
 
 
 #dhis-web-script-libray
